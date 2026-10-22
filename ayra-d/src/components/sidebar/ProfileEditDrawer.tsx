@@ -162,7 +162,7 @@ export function ProfileEditDrawer({
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept="image/*"
+                  accept={ACCEPT_IMAGES}
                   className="hidden"
                   onChange={handleAvatarChange}
                 />

@@ -7,6 +7,7 @@ import { useToast } from '@/providers/ToastProvider'
 import { mapApiErrorToToast } from '@/lib/apiFeedback'
 import { Apple, Loader2, Plus, Camera, Trash2 } from 'lucide-react'
 import { mediaUrl } from '@/lib/media'
+import { ACCEPT_IMAGES, isAcceptedImage } from '@/lib/imageFormats'
 
 
 export default function NutritionPage() {
@@ -249,11 +250,11 @@ function MealForm({ onClose, onSaved }: { onClose: () => void; onSaved: () => vo
             <input
               name="image"
               type="file"
-              accept="image/*"
+              accept={ACCEPT_IMAGES}
               className="hidden"
               onChange={(e) => {
                 const file = e.target.files?.[0]
-                if (file) setPreview(URL.createObjectURL(file))
+                if (file && isAcceptedImage(file)) setPreview(URL.createObjectURL(file))
               }}
             />
           </label>
