@@ -66,7 +66,7 @@ test.describe('Login Flow', () => {
     
     const authPanel = page.locator('aside')
 
-    await expect(page.getByRole('heading', { name: /Walk, play, rest with Pendo/i })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Pendo', exact: true })).toBeVisible()
     await expect(authPanel.getByLabel('Email')).toBeVisible()
     await expect(authPanel.getByPlaceholder('Enter your password')).toBeVisible()
   })

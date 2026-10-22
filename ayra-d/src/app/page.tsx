@@ -6,86 +6,62 @@ import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowRight,
-  Bike,
+  Bone,
   ChevronRight,
-  Dumbbell,
   Eye,
   EyeOff,
-  Flame,
-  HeartPulse,
+  Heart,
+  Leaf,
   Loader2,
   LockKeyhole,
   Mail,
-  Target,
+  PawPrint,
+  Snowflake,
   Users,
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
-import PendoMascot from '@/components/pendo/PendoMascot';
 import {
   PENDO_INSTAGRAM_HANDLE,
   PENDO_INSTAGRAM_URL,
   PENDO_PORTRAIT_ALT,
   PENDO_PORTRAIT_URL,
-  PENDO_BREED,
 } from '@/lib/pendo';
 import { getEmailSector, mapAuthErrorToToast, type FieldErrors } from '@/lib/authFeedback';
-import {
-  DEFAULT_HOMEPAGE_PEOPLE,
-  HOMEPAGE_PEOPLE_EVENT,
-  type HomepagePerson,
-  readHomepagePeople,
-} from '@/lib/gongafitHomepage';
 
 type AuthMode = 'login' | 'signup';
 
 const mascotImage = PENDO_PORTRAIT_URL;
 
-const trainerSlides = [
-  {
-    imageUrl: '/images/pendo/pendo-portrait.png',
-    title: 'Meet Pendo',
-    body: 'Our chief morale officer. A white doodle who treats every walk like the best one yet.',
-  },
-  {
-    imageUrl: '/images/pendo/pendo-happy.png',
-    title: 'Walk happy',
-    body: 'Tongue out, ears up. Every mile is the best mile.',
-  },
-  {
-    imageUrl: '/images/pendo/pendo-grass.png',
-    title: 'Play hard',
-    body: 'Sprints, rolls, and full-body wiggles in the grass.',
-  },
-  {
-    imageUrl: '/images/pendo/pendo-rest-rocks.png',
-    title: 'Rest well',
-    body: 'Even high-energy pups nap. Recovery is training.',
-  },
-  {
-    imageUrl: '/images/pendo/pendo-pillow.png',
-    title: 'Recover cozy',
-    body: 'Chin on the pillow. Sleep is part of the plan.',
-  },
-];
+const heroPhoto = {
+  imageUrl: '/images/pendo/gallery/hero-grass.png',
+  title: 'Pendo the Poodle',
+  body: 'Cream-coated, curly-haired, and photographed in every season.',
+};
 
-const workoutChips = [
-  { label: 'HIIT', Icon: Flame, color: '#dc322f', bg: '#fce4e1' },
-  { label: 'Strength', Icon: Dumbbell, color: '#859900', bg: '#e8f5c8' },
-  { label: 'Yoga', Icon: HeartPulse, color: '#2aa198', bg: '#d5eff7' },
-  { label: 'Cycling', Icon: Bike, color: '#b58900', bg: '#f5e6c4' },
-  { label: 'Community', Icon: Users, color: '#cb4b16', bg: '#fce4e1' },
-];
+const galleryFilters = ['All photos', 'Snow mode', 'Outdoor mode', 'Cushion mode', 'Dressed up'] as const;
 
-const toolHighlights = [
-  {
-    title: 'Track progress',
-    body: 'See stats and celebrate wins.',
-    Icon: ArrowRight,
-    color: '#268bd2',
-  },
-  { title: 'Stay consistent', body: 'Build streaks and habits.', Icon: Target, color: '#859900' },
-  { title: 'Train together', body: 'Move with friends.', Icon: Users, color: '#b58900' },
+const galleryPhotos = [
+  { title: 'Snow stand', mode: 'Snow mode', imageUrl: '/images/pendo/gallery/snow-stand.png' },
+  { title: 'Snow sit', mode: 'Snow mode', imageUrl: '/images/pendo/gallery/snow-sit.png' },
+  { title: 'Deck in snow', mode: 'Snow mode', imageUrl: '/images/pendo/gallery/deck-in-snow.png' },
+  { title: 'Snow nap', mode: 'Snow mode', imageUrl: '/images/pendo/gallery/snow-nap.png' },
+  { title: 'Leaf pile', mode: 'Outdoor mode', imageUrl: '/images/pendo/gallery/leaf-pile.png' },
+  { title: 'Hillside sit', mode: 'Outdoor mode', imageUrl: '/images/pendo/gallery/hillside-sit.png' },
+  { title: 'Garden stroll', mode: 'Outdoor mode', imageUrl: '/images/pendo/gallery/garden-stroll.png' },
+  { title: 'Paw mat', mode: 'Cushion mode', imageUrl: '/images/pendo/gallery/paw-mat.png' },
+  { title: 'Red cushion', mode: 'Cushion mode', imageUrl: '/images/pendo/gallery/red-cushion.png' },
+  { title: 'Heart tag', mode: 'Dressed up', imageUrl: '/images/pendo/gallery/heart-tag.png' },
+  { title: 'Green bandana', mode: 'Dressed up', imageUrl: '/images/pendo/gallery/green-bandana.png' },
+  { title: 'Christmas lights', mode: 'Dressed up', imageUrl: '/images/pendo/gallery/christmas-lights.png' },
+] as const;
+
+const galleryMarkers = [
+  { label: 'Heart tag', Icon: Heart, color: '#a92845' },
+  { label: 'Paw-print mat', Icon: PawPrint, color: '#80634f' },
+  { label: 'Red bone', Icon: Bone, color: '#a92845' },
+  { label: 'Snow day', Icon: Snowflake, color: '#181414' },
+  { label: 'Leaf pile', Icon: Leaf, color: '#4d7b45' },
 ];
 
 export default function PendoLanding() {
@@ -106,8 +82,7 @@ function PendoLandingInner() {
   const [showPassword, setShowPassword] = useState(false);
   const [cooldownSeconds, setCooldownSeconds] = useState<number | null>(null);
   const [redirecting, setRedirecting] = useState(false);
-  const [people, setPeople] = useState<HomepagePerson[]>(DEFAULT_HOMEPAGE_PEOPLE);
-  const [activeSlide, setActiveSlide] = useState(0);
+  const [activeFilter, setActiveFilter] = useState<(typeof galleryFilters)[number]>('All photos');
   const router = useRouter();
   const searchParams = useSearchParams();
   const handledReasonRef = useRef(false);
@@ -115,28 +90,9 @@ function PendoLandingInner() {
   const { toast } = useToast();
 
   const isLockedOut = cooldownSeconds !== null && cooldownSeconds > 0;
-  const currentSlide = trainerSlides[activeSlide];
-
-  useEffect(() => {
-    setPeople(readHomepagePeople());
-
-    const syncPeople = () => setPeople(readHomepagePeople());
-    window.addEventListener('storage', syncPeople);
-    window.addEventListener(HOMEPAGE_PEOPLE_EVENT, syncPeople);
-
-    return () => {
-      window.removeEventListener('storage', syncPeople);
-      window.removeEventListener(HOMEPAGE_PEOPLE_EVENT, syncPeople);
-    };
-  }, []);
-
-  useEffect(() => {
-    const interval = window.setInterval(() => {
-      setActiveSlide(current => (current + 1) % trainerSlides.length);
-    }, 4500);
-
-    return () => window.clearInterval(interval);
-  }, []);
+  const scrollToGallery = () => {
+    document.getElementById('gallery')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   useEffect(() => {
     if (handledReasonRef.current) return;
@@ -298,18 +254,11 @@ function PendoLandingInner() {
       <main className="min-h-screen p-3 sm:p-5 lg:p-7">
         <section className="relative min-h-[calc(100vh-1.5rem)] overflow-hidden rounded-[28px] border border-[#eee8d5]/80 bg-[#fdf6e3] shadow-[0_24px_80px_rgba(0,43,54,0.18)] sm:min-h-[calc(100vh-2.5rem)] lg:min-h-[calc(100vh-3.5rem)]">
           <div className="absolute inset-0 bg-gradient-to-br from-[#fdf6e3] via-[#eee8d5] to-[#eee8d5]" />
-          <AnimatePresence mode="wait">
-            <motion.img
-              key={currentSlide.imageUrl}
-              src={currentSlide.imageUrl}
-              alt={currentSlide.title}
-              initial={{ opacity: 0, scale: 1.03 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.02 }}
-              transition={{ duration: 0.55, ease: 'easeOut' }}
-              className="absolute bottom-0 right-0 top-0 hidden h-full w-[68%] object-cover object-center lg:block"
-            />
-          </AnimatePresence>
+          <img
+            src={heroPhoto.imageUrl}
+            alt={heroPhoto.title}
+            className="absolute bottom-0 right-0 top-0 hidden h-full w-[68%] object-cover object-center lg:block"
+          />
           <div className="absolute inset-0 hidden bg-gradient-to-r from-[#fdf6e3] via-[#fdf6e3]/90 to-[#fdf6e3]/16 lg:block" />
           <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#eee8d5] to-transparent" />
 
@@ -330,10 +279,12 @@ function PendoLandingInner() {
               </button>
 
               <nav className="hidden items-center gap-8 text-sm font-black text-[#002b36] lg:flex">
-                <span>Workouts</span>
-                <span>Programs</span>
-                <span>Community</span>
-                <span>Progress</span>
+                <button type="button" onClick={scrollToGallery} className="transition-colors hover:text-[#a92845]">
+                  Gallery
+                </button>
+                <a href={PENDO_INSTAGRAM_URL} target="_blank" rel="noreferrer" className="transition-colors hover:text-[#a92845]">
+                  Instagram
+                </a>
                 <Link href="/contact" className="hover:text-[#dc322f] transition-colors">
                   Contact
                 </Link>
@@ -344,20 +295,23 @@ function PendoLandingInner() {
                 onClick={() => setMode('signup')}
                 className="hidden items-center gap-2 rounded-full bg-[#859900] px-5 py-3 text-sm font-black text-[#002b36] shadow-[0_12px_24px_rgba(133,153,0,0.22)] transition hover:-translate-y-0.5 hover:bg-[#859900] sm:inline-flex"
               >
-                Start training
+                Join Pendo
                 <ChevronRight className="h-4 w-4" />
               </button>
             </header>
 
             <div className="grid flex-1 auto-rows-max content-start items-start gap-6 px-5 pb-8 sm:px-8 lg:grid-cols-[minmax(0,1fr)_430px] lg:items-center lg:px-10 lg:pb-24">
               <div className="max-w-4xl pt-5 lg:pt-0">
+                <p className="mb-4 text-xs font-black uppercase tracking-[0.28em] text-[#80634f] sm:mb-5">
+                  The poodle-doodle
+                </p>
                 <motion.h1
                   initial={{ opacity: 1, y: 0 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.55, ease: 'easeOut' }}
-                  className="max-w-3xl text-5xl font-black leading-[0.96] text-[#002b36] sm:text-7xl lg:text-8xl"
+                  className="max-w-3xl font-serif text-5xl font-black leading-[0.96] text-[#002b36] sm:text-7xl lg:text-8xl"
                 >
-                  Walk, play, rest with <span className="text-[#dc322f]">Pendo</span>
+                  Pendo
                 </motion.h1>
                 <motion.p
                   initial={{ opacity: 1, y: 0 }}
@@ -365,7 +319,7 @@ function PendoLandingInner() {
                   transition={{ duration: 0.55, delay: 0.08, ease: 'easeOut' }}
                   className="mt-4 max-w-xl text-lg font-medium leading-7 text-[#586e75] sm:mt-6 sm:text-xl sm:leading-8"
                 >
-                  Move with coaches, friends, and Pendo — the {PENDO_BREED} who never skips a walk.
+                  Cream-coated, curly-haired, and photographed in every season, from fresh snow to the Christmas tree.
                 </motion.p>
 
                 <motion.div
@@ -374,20 +328,21 @@ function PendoLandingInner() {
                   transition={{ duration: 0.55, delay: 0.14, ease: 'easeOut' }}
                   className="mt-6 flex flex-wrap gap-3 sm:mt-8 sm:gap-4"
                 >
-                  <button
-                    type="button"
-                    onClick={() => setMode('signup')}
+                  <a
+                    href={PENDO_INSTAGRAM_URL}
+                    target="_blank"
+                    rel="noreferrer"
                     className="inline-flex h-14 items-center gap-3 rounded-full bg-[#dc322f] px-6 text-base font-black text-white shadow-[0_16px_30px_rgba(220,50,47,0.3)] transition hover:-translate-y-0.5 hover:bg-[#cb4b16]"
                   >
-                    Start training
+                    Follow {PENDO_INSTAGRAM_HANDLE}
                     <ArrowRight className="h-5 w-5" />
-                  </button>
+                  </a>
                   <button
                     type="button"
-                    onClick={() => setMode('login')}
+                    onClick={scrollToGallery}
                     className="inline-flex h-14 items-center rounded-full border border-[#93a1a1] bg-[#eee8d5]/90 px-6 text-base font-black text-[#002b36] shadow-[0_10px_24px_rgba(0,43,54,0.10)] transition hover:-translate-y-0.5 hover:border-[#dc322f]"
                   >
-                    Log in
+                    See the photos
                   </button>
                   <button
                     type="button"
@@ -398,38 +353,6 @@ function PendoLandingInner() {
                   </button>
                 </motion.div>
 
-                <a
-                  href={PENDO_INSTAGRAM_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-8 inline-flex items-center gap-3 rounded-full border border-[#eee8d5] bg-[#eee8d5]/90 py-2 pl-2 pr-5 text-sm font-black text-[#002b36] shadow-[0_10px_20px_rgba(0,43,54,0.10)] transition hover:-translate-y-0.5 hover:border-[#dc322f]"
-                >
-                  <PendoMascot className="h-9 w-9" />
-                  Follow Pendo on Instagram · {PENDO_INSTAGRAM_HANDLE}
-                </a>
-
-                <div className="mt-10 hidden max-w-2xl grid-cols-3 gap-3 lg:grid">
-                  {people.map(person => (
-                    <PersonCard key={person.id} person={person} />
-                  ))}
-                </div>
-
-                <div className="mt-6 hidden max-w-3xl flex-wrap gap-3 lg:flex">
-                  {workoutChips.map(({ label, Icon, color, bg }) => (
-                    <span
-                      key={label}
-                      className="inline-flex items-center gap-2 rounded-full border border-[#eee8d5] bg-[#eee8d5]/90 px-4 py-3 text-sm font-black text-[#002b36] shadow-[0_10px_20px_rgba(0,43,54,0.10)]"
-                    >
-                      <span
-                        className="flex h-8 w-8 items-center justify-center rounded-full"
-                        style={{ backgroundColor: bg, color }}
-                      >
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      {label}
-                    </span>
-                  ))}
-                </div>
               </div>
 
               <AuthPanel
@@ -457,148 +380,115 @@ function PendoLandingInner() {
               />
 
               <div className="lg:hidden">
-                <TrainerSlideshow
-                  activeSlide={activeSlide}
-                  setActiveSlide={setActiveSlide}
-                  className="mb-5"
-                />
-                <div className="grid grid-cols-3 gap-3">
-                  {people.map(person => (
-                    <PersonCard key={person.id} person={person} />
-                  ))}
-                </div>
-                <div className="mt-5 flex flex-wrap gap-3">
-                  {workoutChips.map(({ label, Icon, color, bg }) => (
-                    <span
-                      key={label}
-                      className="inline-flex items-center gap-2 rounded-full border border-[#eee8d5] bg-[#eee8d5]/90 px-4 py-3 text-sm font-black text-[#002b36] shadow-[0_10px_20px_rgba(0,43,54,0.10)]"
-                    >
-                      <span
-                        className="flex h-8 w-8 items-center justify-center rounded-full"
-                        style={{ backgroundColor: bg, color }}
-                      >
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      {label}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute bottom-32 right-[470px] z-20 hidden gap-2 lg:flex">
-              {trainerSlides.map((item, index) => (
-                <button
-                  key={item.imageUrl}
-                  type="button"
-                  onClick={() => setActiveSlide(index)}
-                  className={`h-2 rounded-full transition-all ${
-                    index === activeSlide
-                      ? 'w-8 bg-[#dc322f]'
-                      : 'w-2 bg-[#eee8d5]/80 hover:bg-[#eee8d5]'
-                  }`}
-                  aria-label={`Show ${item.title}`}
-                />
-              ))}
-            </div>
-
-            <div className="relative z-10 mx-5 mb-5 rounded-[28px] bg-[#eee8d5]/92 px-6 py-6 shadow-[0_18px_44px_rgba(0,43,54,0.12)] sm:mx-8 lg:mx-10">
-              <div className="grid gap-5 lg:grid-cols-[1.2fr_repeat(3,1fr)] lg:items-center">
-                <h2 className="text-3xl font-black leading-tight text-[#002b36]">
-                  All the tools to reach your goals
-                </h2>
-                {toolHighlights.map(({ title, body, Icon, color }) => (
-                  <div key={title} className="flex items-center gap-4">
-                    <span
-                      className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-[#002b36]"
-                      style={{ backgroundColor: color }}
-                    >
-                      <Icon className="h-6 w-6" />
-                    </span>
-                    <div>
-                      <p className="font-black text-[#002b36]">{title}</p>
-                      <p className="text-sm font-medium leading-5 text-[#657b83]">{body}</p>
-                    </div>
+                <div className="mb-5 overflow-hidden rounded-[24px] bg-[#eee8d5]/92 shadow-[0_18px_44px_rgba(0,43,54,0.18)] backdrop-blur">
+                  <div className="h-56 sm:h-64">
+                    <img
+                      src={heroPhoto.imageUrl}
+                      alt={heroPhoto.title}
+                      className="h-full w-full object-cover object-center"
+                    />
                   </div>
-                ))}
+                  <div className="p-4">
+                    <p className="text-base font-black text-[#002b36]">{heroPhoto.title}</p>
+                    <p className="mt-1 text-sm font-medium leading-5 text-[#657b83]">{heroPhoto.body}</p>
+                  </div>
+                </div>
               </div>
             </div>
+
           </div>
         </section>
+        <PendoGallery activeFilter={activeFilter} setActiveFilter={setActiveFilter} />
       </main>
     </div>
   );
 }
 
-function PersonCard({ person }: { person: HomepagePerson }) {
-  return (
-    <div className="overflow-hidden rounded-2xl bg-[#eee8d5] shadow-[0_14px_30px_rgba(0,43,54,0.18)]">
-      <div className="h-28 bg-[#fdf6e3] sm:h-32 lg:h-24" style={{ backgroundColor: person.accent }}>
-        <img src={person.imageUrl} alt="" className="h-full w-full object-cover object-top" />
-      </div>
-      <div className="min-h-[72px] px-2 py-3 text-center sm:px-3">
-        <p className="text-sm font-black leading-tight text-[#002b36] sm:text-base lg:text-lg">
-          {person.name}
-        </p>
-        <p className="mt-1 text-[11px] font-bold leading-tight text-[#657b83] sm:text-xs">
-          {person.role}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function TrainerSlideshow({
-  activeSlide,
-  setActiveSlide,
-  className = '',
-  compact = false,
+function PendoGallery({
+  activeFilter,
+  setActiveFilter,
 }: {
-  activeSlide: number;
-  setActiveSlide: (index: number) => void;
-  className?: string;
-  compact?: boolean;
+  activeFilter: (typeof galleryFilters)[number];
+  setActiveFilter: (filter: (typeof galleryFilters)[number]) => void;
 }) {
-  const slide = trainerSlides[activeSlide];
+  const visiblePhotos = galleryPhotos.filter(
+    photo => activeFilter === 'All photos' || photo.mode === activeFilter
+  );
 
   return (
-    <div
-      className={`overflow-hidden rounded-[24px] bg-[#eee8d5]/92 shadow-[0_18px_44px_rgba(0,43,54,0.18)] backdrop-blur ${className}`}
-    >
-      <div className={compact ? 'h-40' : 'h-56 sm:h-64'}>
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={slide.imageUrl}
-            src={slide.imageUrl}
-            alt={slide.title}
-            initial={{ opacity: 0, scale: 1.03 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.02 }}
-            transition={{ duration: 0.45, ease: 'easeOut' }}
-            className="h-full w-full object-cover object-top"
-          />
-        </AnimatePresence>
+    <section id="gallery" className="mx-auto max-w-7xl scroll-mt-8 py-16 sm:py-24">
+      <div className="mb-10 grid gap-7 border-y border-[#dccfbd] bg-[#e8ddce] px-5 py-6 sm:grid-cols-5 sm:px-10">
+        {galleryMarkers.map(({ label, Icon, color }) => (
+          <div key={label} className="flex items-center gap-3 text-sm font-black text-[#2a211d]">
+            <Icon className="h-6 w-6" style={{ color }} strokeWidth={2.4} />
+            {label}
+          </div>
+        ))}
       </div>
-      <div className="p-4">
-        <p className="text-base font-black text-[#002b36]">{slide.title}</p>
-        {!compact && (
-          <p className="mt-1 text-sm font-medium leading-5 text-[#657b83]">{slide.body}</p>
-        )}
-        <div className="mt-3 flex gap-2">
-          {trainerSlides.map((item, index) => (
-            <button
-              key={item.imageUrl}
-              type="button"
-              onClick={() => setActiveSlide(index)}
-              className={`h-2 rounded-full transition-all ${
-                index === activeSlide ? 'w-7 bg-[#dc322f]' : 'w-2 bg-[#93a1a1] hover:bg-[#657b83]'
-              }`}
-              aria-label={`Show ${item.title}`}
-            />
+
+      <div className="px-2 sm:px-4">
+        <p className="text-xs font-black uppercase tracking-[0.28em] text-[#80634f]">A seasonal archive</p>
+        <h2 className="mt-3 font-serif text-5xl font-black tracking-[-0.04em] text-[#181414] sm:text-6xl">
+          The photos
+        </h2>
+        <p className="mt-3 text-base font-medium text-[#806f64]">Pick a mode to filter the gallery.</p>
+
+        <div className="mt-7 flex flex-wrap gap-2.5" role="group" aria-label="Filter Pendo's photos">
+          {galleryFilters.map(filter => {
+            const active = activeFilter === filter;
+            return (
+              <button
+                key={filter}
+                type="button"
+                aria-pressed={active}
+                onClick={() => setActiveFilter(filter)}
+                className={`rounded-full border px-4 py-2.5 text-sm font-black transition ${
+                  active
+                    ? 'border-[#181414] bg-[#181414] text-[#f8f3eb]'
+                    : 'border-[#7b7068] bg-transparent text-[#2a211d] hover:border-[#a92845] hover:text-[#a92845]'
+                }`}
+              >
+                {filter}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-9 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
+          {visiblePhotos.map(photo => (
+            <figure key={photo.title} className="group min-w-0">
+              <div className="aspect-[1.3] overflow-hidden rounded-[18px] bg-[#e8ddce]">
+                <img
+                  src={photo.imageUrl}
+                  alt={`Pendo: ${photo.title}`}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]"
+                />
+              </div>
+              <figcaption className="mt-3 text-sm font-black leading-5 text-[#181414]">
+                {photo.title}
+                <span className="font-medium text-[#80634f]"> · {photo.mode}</span>
+              </figcaption>
+            </figure>
           ))}
         </div>
       </div>
-    </div>
+
+      <footer className="mt-20 flex flex-col gap-5 bg-[#181414] px-6 py-9 text-[#f8f3eb] sm:flex-row sm:items-center sm:justify-between sm:px-10">
+        <div>
+          <p className="font-serif text-3xl font-black tracking-[-0.03em]">Pendo the Poodle</p>
+          <p className="mt-2 text-sm font-medium text-[#d9cbbd]">One curly coat, every season. Follow along on Instagram.</p>
+        </div>
+        <a
+          href={PENDO_INSTAGRAM_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex w-fit rounded-full bg-[#f8f3eb] px-5 py-3 text-sm font-black text-[#181414] transition hover:bg-[#e8ddce]"
+        >
+          {PENDO_INSTAGRAM_HANDLE}
+        </a>
+      </footer>
+    </section>
   );
 }
 
