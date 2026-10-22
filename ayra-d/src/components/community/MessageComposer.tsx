@@ -4,6 +4,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import { Send, Image as ImageIcon, Smile, Loader2, X, AtSign, Lock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { mediaUrl } from '@/lib/media'
+import { ACCEPT_MEDIA, isAcceptedImage, isAcceptedVideo, isHeic, formatLabel } from '@/lib/imageFormats'
 import { useMediaUpload, type Message } from '@/hooks'
 import { useToast } from '@/hooks/useToast'
 import { mapApiErrorToToast } from '@/lib/apiFeedback'
@@ -129,10 +130,16 @@ export function MessageComposer({
     if (!files || files.length === 0) return
 
     for (const file of Array.from(files)) {
-      if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) continue
+      // Extension-based check catches HEIC files where iOS sends an empty/generic MIME type
+      if (!isAcceptedImage(file) && !isAcceptedVideo(file)) continue
       if (pendingMedia.length >= maxMediaPerMessage) {
         toast({ title: `Your plan allows up to ${maxMediaPerMessage} attachments per message`, variant: 'destructive' })
         break
+      }
+
+      // Let the user know HEIC/HEIF files will be converted server-side
+      if (isHeic(file)) {
+        toast({ title: `Converting ${formatLabel(file)} to JPEG…` })
       }
 
       const blobUrl = URL.createObjectURL(file)
@@ -268,7 +275,7 @@ export function MessageComposer({
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*,video/*"
+          accept={ACCEPT_MEDIA}
           multiple
           onChange={handleFileSelect}
           className="hidden"

@@ -9,6 +9,7 @@ import { userRepository } from '../repositories/userRepository';
 import { storageService } from '../services/storageService';
 import { authService } from '../services/authService';
 import { isStripeConfigured } from '../services/stripeService';
+import { createImageFileFilter, processImage } from '../services/imageService';
 
 const router: Router = Router();
 
@@ -18,7 +19,11 @@ function demoTierSwitchAllowed(): boolean {
   if (process.env.ALLOW_DEMO_TIER_SWITCH === 'true') return true;
   return !isStripeConfigured();
 }
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: createImageFileFilter(),
+});
 
 const updateProfileSchema = z.object({
   display_name: z.string().min(1).optional(),
@@ -212,8 +217,23 @@ router.post('/me/avatar', authenticateJWT, upload.single('avatar'), async (req, 
       return res.status(400).json({ error: 'No image provided' });
     }
 
-    const key = storageService.generateAvatarKey(req.user!.userId, req.file.originalname);
-    await storageService.uploadFile(key, req.file.buffer, req.file.mimetype);
+    // Convert HEIC/HEIF/AVIF/TIFF/BMP → JPEG, resize to 512px, strip EXIF
+    let buffer: Buffer;
+    let ext: string;
+    let mimetype: string;
+    try {
+      const processed = await processImage(req.file.buffer, req.file.mimetype, req.file.originalname, {
+        maxDimension: 512,
+      });
+      buffer = processed.buffer;
+      ext = processed.ext;
+      mimetype = processed.mimetype;
+    } catch (err: any) {
+      return res.status(400).json({ error: err.message || 'Failed to process image' });
+    }
+
+    const key = `avatars/${req.user!.userId}.${ext}`;
+    await storageService.uploadFile(key, buffer, mimetype);
 
     const user = await userRepository.update(req.user!.userId, { avatar_url: key });
     res.json({ user, key });

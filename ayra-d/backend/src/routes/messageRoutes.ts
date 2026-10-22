@@ -11,17 +11,12 @@ import { awardXp } from '../services/xpService';
 import { notify } from '../services/notificationService';
 import { storageService } from '../services/storageService';
 import { getIO } from '../socket/socketServer';
+import { createMediaFileFilter, processImage } from '../services/imageService';
 
 const uploadMiddleware = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 25 * 1024 * 1024 }, // hard cap; per-tier limit enforced in handler
-  fileFilter: (_req, file, cb) => {
-    if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
-      cb(null, true);
-    } else {
-      cb(new Error('Only image and video files are allowed'));
-    }
-  },
+  fileFilter: createMediaFileFilter({ allowVideo: true }),
 });
 
 /** Emit to the narrowest room a message belongs to (channel > squad > DM pair > global). */
@@ -1321,12 +1316,34 @@ router.post('/upload', authenticateJWT, loadFreshTier, rejectMuted, uploadLimite
       });
     }
 
+    // Convert HEIC/HEIF/AVIF/TIFF/BMP → JPEG for images.
+    // Videos and already-web-native images pass through unchanged.
+    let buffer = req.file.buffer;
+    let ext = req.file.originalname.split('.').pop() || 'jpg';
+    let mimetype = req.file.mimetype;
+
+    const isImage = mimetype.startsWith('image/') ||
+      ['heic', 'heif', 'avif', 'tif', 'tiff', 'bmp', 'jpg', 'jpeg', 'png', 'gif', 'webp']
+        .includes(req.file.originalname.split('.').pop()?.toLowerCase() || '');
+
+    if (isImage) {
+      try {
+        const processed = await processImage(req.file.buffer, req.file.mimetype, req.file.originalname, {
+          maxDimension: 2048,
+        });
+        buffer = processed.buffer;
+        ext = processed.ext;
+        mimetype = processed.mimetype;
+      } catch (err: any) {
+        return res.status(400).json({ error: err.message || 'Failed to process image' });
+      }
+    }
+
     const timestamp = Date.now();
     const randomId = Math.random().toString(36).substring(2, 9);
-    const ext = req.file.originalname.split('.').pop() || 'jpg';
     const key = `messages/${req.user!.userId}/${timestamp}-${randomId}.${ext}`;
 
-    await storageService.uploadFile(key, req.file.buffer, req.file.mimetype);
+    await storageService.uploadFile(key, buffer, mimetype);
 
     const baseUrl = `${req.protocol}://${req.get('host')}`;
     res.json({ publicUrl: `${baseUrl}/api/media/${key}` });

@@ -11,8 +11,12 @@ import {
 } from 'react'
 import {
   DEFAULT_THEME,
+  DEFAULT_COLOR_MODE,
+  COLOR_MODE_STORAGE_KEY,
   THEME_STORAGE_KEY,
+  isColorMode,
   isThemeId,
+  type ColorMode,
   type ThemeId,
 } from '@/lib/themes'
 import { ThemeRepository } from '@/repositories/ThemeRepository'
@@ -31,6 +35,9 @@ interface ThemeContextValue {
   commitTheme: (themeId: ThemeId) => void
   /** Restore the last server-confirmed theme after a failed save. */
   rollbackTheme: () => void
+  colorMode: ColorMode
+  setColorMode: (mode: ColorMode) => void
+  toggleColorMode: () => void
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null)
@@ -55,17 +62,41 @@ export function applyThemeToDocument(themeId: ThemeId): void {
   }
 }
 
+export function readCachedColorMode(): ColorMode {
+  if (typeof window === 'undefined') return DEFAULT_COLOR_MODE
+  try {
+    const cached = window.localStorage.getItem(COLOR_MODE_STORAGE_KEY)
+    return isColorMode(cached) ? cached : DEFAULT_COLOR_MODE
+  } catch {
+    return DEFAULT_COLOR_MODE
+  }
+}
+
+export function applyColorModeToDocument(mode: ColorMode): void {
+  if (typeof document === 'undefined') return
+  document.documentElement.dataset.colorMode = mode
+  try {
+    window.localStorage.setItem(COLOR_MODE_STORAGE_KEY, mode)
+  } catch {
+    // Storage can be unavailable in private/restricted browser contexts.
+  }
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeId>(DEFAULT_THEME)
   const [persistedTheme, setPersistedTheme] = useState<ThemeId>(DEFAULT_THEME)
+  const [colorMode, setColorModeState] = useState<ColorMode>(DEFAULT_COLOR_MODE)
   const [loadState, setLoadState] = useState<ThemeLoadState>('loading')
 
   useEffect(() => {
     let cancelled = false
     const cachedTheme = readCachedTheme()
+    const cachedColorMode = readCachedColorMode()
     setThemeState(cachedTheme)
     setPersistedTheme(cachedTheme)
+    setColorModeState(cachedColorMode)
     applyThemeToDocument(cachedTheme)
+    applyColorModeToDocument(cachedColorMode)
 
     void ThemeRepository.getSiteTheme()
       .then((serverTheme) => {
@@ -100,6 +131,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     applyThemeToDocument(persistedTheme)
   }, [persistedTheme])
 
+  const setColorMode = useCallback((mode: ColorMode) => {
+    setColorModeState(mode)
+    applyColorModeToDocument(mode)
+  }, [])
+
+  const toggleColorMode = useCallback(() => {
+    setColorMode(colorMode === 'dark' ? 'light' : 'dark')
+  }, [colorMode, setColorMode])
+
   const value = useMemo<ThemeContextValue>(
     () => ({
       theme,
@@ -108,8 +148,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       setTheme,
       commitTheme,
       rollbackTheme,
+      colorMode,
+      setColorMode,
+      toggleColorMode,
     }),
-    [theme, persistedTheme, loadState, setTheme, commitTheme, rollbackTheme],
+    [theme, persistedTheme, loadState, setTheme, commitTheme, rollbackTheme, colorMode, setColorMode, toggleColorMode],
   )
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>

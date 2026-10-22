@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import { Activity, LineChart, Users, Settings } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -25,29 +24,21 @@ interface SidebarNavProps {
 
 export function SidebarNav({ isCollapsed, currentPathname, isActiveRoute }: SidebarNavProps) {
   return (
-    <nav className="flex-1 overflow-y-auto discord-scrollbar px-3 space-y-1 pb-4 overflow-x-hidden">
+    <nav className="pendo-sidebar-nav">
       {navItems.map((item) => {
         const isActive = isActiveRoute(item.href)
         return (
           <div key={item.label} className="relative group">
             <Link
               href={item.href}
-              className={`relative flex items-center gap-3 p-3 rounded-xl text-sm font-medium transition-colors duration-200 ${
+              className={`pendo-sidebar-nav-link ${
                 isActive
-                  ? 'text-white shadow-sm'
-                  : 'text-clean-muted nav-item-hover'
+                  ? 'is-active'
+                  : ''
               } ${isCollapsed ? 'justify-center' : 'px-4'}`}
             >
-              {isActive && (
-                <motion.div
-                  layoutId="active-sidebar-pill"
-                  className="absolute inset-0 bg-clean-accent rounded-xl z-0"
-                  initial={false}
-                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                />
-              )}
               <div className="relative z-10 flex items-center gap-3">
-                <item.icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-white' : ''}`} />
+                <item.icon className="h-5 w-5 shrink-0" />
                 {!isCollapsed && <span className="whitespace-nowrap">{item.label}</span>}
               </div>
             </Link>
@@ -60,28 +51,20 @@ export function SidebarNav({ isCollapsed, currentPathname, isActiveRoute }: Side
         )
       })}
 
-      <div className="my-4 border-t border-clean-border mx-2" />
+      <div className="pendo-sidebar-rule" />
 
       {/* Settings Item */}
       <div className="relative group">
         <Link
           href="/dashboard/settings"
-          className={`relative flex items-center gap-3 p-3 rounded-xl text-sm font-medium transition-colors duration-200 ${
+          className={`pendo-sidebar-nav-link ${
             isActiveRoute('/dashboard/settings')
-              ? 'text-white shadow-sm'
-              : 'text-clean-muted nav-item-hover'
+              ? 'is-active'
+              : ''
           } ${isCollapsed ? 'justify-center' : 'px-4'}`}
         >
-          {isActiveRoute('/dashboard/settings') && (
-            <motion.div
-              layoutId="active-sidebar-pill"
-              className="absolute inset-0 bg-clean-accent rounded-xl z-0"
-              initial={false}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            />
-          )}
           <div className="relative z-10 flex items-center gap-3">
-            <Settings className={`w-5 h-5 shrink-0 ${isActiveRoute('/dashboard/settings') ? 'text-white' : ''}`} />
+            <Settings className="h-5 w-5 shrink-0" />
             {!isCollapsed && <span className="whitespace-nowrap">Settings</span>}
           </div>
         </Link>

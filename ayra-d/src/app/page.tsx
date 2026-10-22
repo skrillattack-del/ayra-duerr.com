@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
+import { ColorModeToggle } from '@/components/theme/ColorModeToggle';
 import {
   PENDO_INSTAGRAM_HANDLE,
   PENDO_INSTAGRAM_URL,
@@ -250,17 +251,17 @@ function PendoLandingInner() {
   };
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[#fdf6e3] text-[#002b36] selection:bg-[#b58900] selection:text-[#fdf6e3]">
+    <div className="pendo-auth-page min-h-screen overflow-hidden bg-[#fdf6e3] text-[#002b36] selection:bg-[#b58900] selection:text-[#fdf6e3]">
       <main className="min-h-screen p-3 sm:p-5 lg:p-7">
-        <section className="relative min-h-[calc(100vh-1.5rem)] overflow-hidden rounded-[28px] border border-[#eee8d5]/80 bg-[#fdf6e3] shadow-[0_24px_80px_rgba(0,43,54,0.18)] sm:min-h-[calc(100vh-2.5rem)] lg:min-h-[calc(100vh-3.5rem)]">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#fdf6e3] via-[#eee8d5] to-[#eee8d5]" />
+        <section className="pendo-auth-frame relative min-h-[calc(100vh-1.5rem)] overflow-hidden rounded-[28px] border border-[#eee8d5]/80 bg-[#fdf6e3] shadow-[0_24px_80px_rgba(0,43,54,0.18)] sm:min-h-[calc(100vh-2.5rem)] lg:min-h-[calc(100vh-3.5rem)]">
+          <div className="pendo-auth-base absolute inset-0 bg-gradient-to-br from-[#fdf6e3] via-[#eee8d5] to-[#eee8d5]" />
           <img
             src={heroPhoto.imageUrl}
             alt={heroPhoto.title}
-            className="absolute bottom-0 right-0 top-0 hidden h-full w-[68%] object-cover object-center lg:block"
+            className="pendo-auth-hero-image absolute bottom-0 right-0 top-0 hidden h-full w-[68%] object-cover object-center lg:block"
           />
-          <div className="absolute inset-0 hidden bg-gradient-to-r from-[#fdf6e3] via-[#fdf6e3]/90 to-[#fdf6e3]/16 lg:block" />
-          <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#eee8d5] to-transparent" />
+          <div className="pendo-auth-hero-overlay absolute inset-0 hidden bg-gradient-to-r from-[#fdf6e3] via-[#fdf6e3]/90 to-[#fdf6e3]/16 lg:block" />
+          <div className="pendo-auth-bottom-fade absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#eee8d5] to-transparent" />
 
           <div className="relative z-10 flex min-h-[calc(100vh-1.5rem)] flex-col sm:min-h-[calc(100vh-2.5rem)] lg:min-h-[calc(100vh-3.5rem)]">
             <header className="flex items-center justify-between gap-4 px-5 py-5 sm:px-8 lg:px-10">
@@ -270,15 +271,15 @@ function PendoLandingInner() {
                 aria-label="Pendo home"
                 onClick={() => router.push('/')}
               >
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#dc322f] text-3xl font-black text-white shadow-[0_10px_20px_rgba(220,50,47,0.28)]">
+                <span className="pendo-auth-logo-mark flex h-12 w-12 items-center justify-center rounded-full bg-[#dc322f] text-3xl font-black text-white shadow-[0_10px_20px_rgba(220,50,47,0.28)]">
                   P
                 </span>
-                <span className="text-2xl font-black text-[#002b36]">
+                <span className="pendo-auth-wordmark text-2xl font-black text-[#002b36]">
                   Pendo<span className="text-[#dc322f]"> the Poodle</span>
                 </span>
               </button>
 
-              <nav className="hidden items-center gap-8 text-sm font-black text-[#002b36] lg:flex">
+              <nav className="pendo-auth-nav hidden items-center gap-8 text-sm font-black text-[#002b36] lg:flex">
                 <button type="button" onClick={scrollToGallery} className="transition-colors hover:text-[#a92845]">
                   Gallery
                 </button>
@@ -290,26 +291,29 @@ function PendoLandingInner() {
                 </Link>
               </nav>
 
-              <button
-                type="button"
-                onClick={() => setMode('signup')}
-                className="hidden items-center gap-2 rounded-full bg-[#859900] px-5 py-3 text-sm font-black text-[#002b36] shadow-[0_12px_24px_rgba(133,153,0,0.22)] transition hover:-translate-y-0.5 hover:bg-[#859900] sm:inline-flex"
-              >
-                Join Pendo
-                <ChevronRight className="h-4 w-4" />
-              </button>
+              <div className="flex items-center gap-2">
+                <ColorModeToggle />
+                <button
+                  type="button"
+                  onClick={() => setMode('signup')}
+                  className="pendo-auth-join hidden items-center gap-2 rounded-full bg-[#859900] px-5 py-3 text-sm font-black text-[#002b36] shadow-[0_12px_24px_rgba(133,153,0,0.22)] transition hover:-translate-y-0.5 hover:bg-[#859900] sm:inline-flex"
+                >
+                  Join Pendo
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
             </header>
 
             <div className="grid flex-1 auto-rows-max content-start items-start gap-6 px-5 pb-8 sm:px-8 lg:grid-cols-[minmax(0,1fr)_430px] lg:items-center lg:px-10 lg:pb-24">
-              <div className="max-w-4xl pt-5 lg:pt-0">
-                <p className="mb-4 text-xs font-black uppercase tracking-[0.28em] text-[#80634f] sm:mb-5">
+              <div className="pendo-auth-copy max-w-4xl pt-5 lg:pt-0">
+                <p className="pendo-auth-kicker mb-4 text-xs font-black uppercase tracking-[0.28em] text-[#80634f] sm:mb-5">
                   The poodle-doodle
                 </p>
                 <motion.h1
                   initial={{ opacity: 1, y: 0 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.55, ease: 'easeOut' }}
-                  className="max-w-3xl font-serif text-5xl font-black leading-[0.96] text-[#002b36] sm:text-7xl lg:text-8xl"
+                  className="pendo-auth-title max-w-3xl font-serif text-5xl font-black leading-[0.96] text-[#002b36] sm:text-7xl lg:text-8xl"
                 >
                   Pendo
                 </motion.h1>
@@ -317,7 +321,7 @@ function PendoLandingInner() {
                   initial={{ opacity: 1, y: 0 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.55, delay: 0.08, ease: 'easeOut' }}
-                  className="mt-4 max-w-xl text-lg font-medium leading-7 text-[#586e75] sm:mt-6 sm:text-xl sm:leading-8"
+                  className="pendo-auth-lead mt-4 max-w-xl text-lg font-medium leading-7 text-[#586e75] sm:mt-6 sm:text-xl sm:leading-8"
                 >
                   Cream-coated, curly-haired, and photographed in every season, from fresh snow to the Christmas tree.
                 </motion.p>
@@ -332,7 +336,7 @@ function PendoLandingInner() {
                     href={PENDO_INSTAGRAM_URL}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex h-14 items-center gap-3 rounded-full bg-[#dc322f] px-6 text-base font-black text-white shadow-[0_16px_30px_rgba(220,50,47,0.3)] transition hover:-translate-y-0.5 hover:bg-[#cb4b16]"
+                    className="pendo-auth-primary inline-flex h-14 items-center gap-3 rounded-full bg-[#dc322f] px-6 text-base font-black text-white shadow-[0_16px_30px_rgba(220,50,47,0.3)] transition hover:-translate-y-0.5 hover:bg-[#cb4b16]"
                   >
                     Follow {PENDO_INSTAGRAM_HANDLE}
                     <ArrowRight className="h-5 w-5" />
@@ -340,14 +344,14 @@ function PendoLandingInner() {
                   <button
                     type="button"
                     onClick={scrollToGallery}
-                    className="inline-flex h-14 items-center rounded-full border border-[#93a1a1] bg-[#eee8d5]/90 px-6 text-base font-black text-[#002b36] shadow-[0_10px_24px_rgba(0,43,54,0.10)] transition hover:-translate-y-0.5 hover:border-[#dc322f]"
+                    className="pendo-auth-secondary inline-flex h-14 items-center rounded-full border border-[#93a1a1] bg-[#eee8d5]/90 px-6 text-base font-black text-[#002b36] shadow-[0_10px_24px_rgba(0,43,54,0.10)] transition hover:-translate-y-0.5 hover:border-[#dc322f]"
                   >
                     See the photos
                   </button>
                   <button
                     type="button"
                     onClick={handleGuest}
-                    className="inline-flex h-14 items-center gap-2 rounded-full border border-dashed border-[#93a1a1] bg-transparent px-6 text-base font-semibold text-[#657b83] transition hover:-translate-y-0.5 hover:border-[#b58900] hover:text-[#b58900]"
+                    className="pendo-auth-guest inline-flex h-14 items-center gap-2 rounded-full border border-dashed border-[#93a1a1] bg-transparent px-6 text-base font-semibold text-[#657b83] transition hover:-translate-y-0.5 hover:border-[#b58900] hover:text-[#b58900]"
                   >
                     Continue as guest
                   </button>
@@ -380,7 +384,7 @@ function PendoLandingInner() {
               />
 
               <div className="lg:hidden">
-                <div className="mb-5 overflow-hidden rounded-[24px] bg-[#eee8d5]/92 shadow-[0_18px_44px_rgba(0,43,54,0.18)] backdrop-blur">
+                <div className="pendo-auth-mobile-hero mb-5 overflow-hidden rounded-[24px] bg-[#eee8d5]/92 shadow-[0_18px_44px_rgba(0,43,54,0.18)] backdrop-blur">
                   <div className="h-56 sm:h-64">
                     <img
                       src={heroPhoto.imageUrl}
@@ -416,8 +420,8 @@ function PendoGallery({
   );
 
   return (
-    <section id="gallery" className="mx-auto max-w-7xl scroll-mt-8 py-16 sm:py-24">
-      <div className="mb-10 grid gap-7 border-y border-[#dccfbd] bg-[#e8ddce] px-5 py-6 sm:grid-cols-5 sm:px-10">
+    <section id="gallery" className="pendo-auth-gallery mx-auto max-w-7xl scroll-mt-8 py-16 sm:py-24">
+      <div className="pendo-auth-markers mb-10 grid gap-7 border-y border-[#dccfbd] bg-[#e8ddce] px-5 py-6 sm:grid-cols-5 sm:px-10">
         {galleryMarkers.map(({ label, Icon, color }) => (
           <div key={label} className="flex items-center gap-3 text-sm font-black text-[#2a211d]">
             <Icon className="h-6 w-6" style={{ color }} strokeWidth={2.4} />
@@ -427,11 +431,11 @@ function PendoGallery({
       </div>
 
       <div className="px-2 sm:px-4">
-        <p className="text-xs font-black uppercase tracking-[0.28em] text-[#80634f]">A seasonal archive</p>
-        <h2 className="mt-3 font-serif text-5xl font-black tracking-[-0.04em] text-[#181414] sm:text-6xl">
+        <p className="pendo-auth-kicker text-xs font-black uppercase tracking-[0.28em] text-[#80634f]">A seasonal archive</p>
+        <h2 className="pendo-auth-gallery-title mt-3 font-serif text-5xl font-black tracking-[-0.04em] text-[#181414] sm:text-6xl">
           The photos
         </h2>
-        <p className="mt-3 text-base font-medium text-[#806f64]">Pick a mode to filter the gallery.</p>
+        <p className="pendo-auth-gallery-lead mt-3 text-base font-medium text-[#806f64]">Pick a mode to filter the gallery.</p>
 
         <div className="mt-7 flex flex-wrap gap-2.5" role="group" aria-label="Filter Pendo's photos">
           {galleryFilters.map(filter => {
@@ -442,7 +446,7 @@ function PendoGallery({
                 type="button"
                 aria-pressed={active}
                 onClick={() => setActiveFilter(filter)}
-                className={`rounded-full border px-4 py-2.5 text-sm font-black transition ${
+                className={`pendo-gallery-filter rounded-full border px-4 py-2.5 text-sm font-black transition ${
                   active
                     ? 'border-[#181414] bg-[#181414] text-[#f8f3eb]'
                     : 'border-[#7b7068] bg-transparent text-[#2a211d] hover:border-[#a92845] hover:text-[#a92845]'
@@ -457,7 +461,7 @@ function PendoGallery({
         <div className="mt-9 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
           {visiblePhotos.map(photo => (
             <figure key={photo.title} className="group min-w-0">
-              <div className="aspect-[1.3] overflow-hidden rounded-[18px] bg-[#e8ddce]">
+              <div className="pendo-gallery-image aspect-[1.3] overflow-hidden rounded-[18px] bg-[#e8ddce]">
                 <img
                   src={photo.imageUrl}
                   alt={`Pendo: ${photo.title}`}
@@ -465,7 +469,7 @@ function PendoGallery({
                   className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.035]"
                 />
               </div>
-              <figcaption className="mt-3 text-sm font-black leading-5 text-[#181414]">
+              <figcaption className="pendo-gallery-caption mt-3 text-sm font-black leading-5 text-[#181414]">
                 {photo.title}
                 <span className="font-medium text-[#80634f]"> · {photo.mode}</span>
               </figcaption>
@@ -474,16 +478,16 @@ function PendoGallery({
         </div>
       </div>
 
-      <footer className="mt-20 flex flex-col gap-5 bg-[#181414] px-6 py-9 text-[#f8f3eb] sm:flex-row sm:items-center sm:justify-between sm:px-10">
+      <footer className="pendo-auth-footer mt-20 flex flex-col gap-5 bg-[#181414] px-6 py-9 text-[#f8f3eb] sm:flex-row sm:items-center sm:justify-between sm:px-10">
         <div>
           <p className="font-serif text-3xl font-black tracking-[-0.03em]">Pendo the Poodle</p>
-          <p className="mt-2 text-sm font-medium text-[#d9cbbd]">One curly coat, every season. Follow along on Instagram.</p>
+              <p className="pendo-auth-footer-copy mt-2 text-sm font-medium text-[#d9cbbd]">One curly coat, every season. Follow along on Instagram.</p>
         </div>
         <a
           href={PENDO_INSTAGRAM_URL}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex w-fit rounded-full bg-[#f8f3eb] px-5 py-3 text-sm font-black text-[#181414] transition hover:bg-[#e8ddce]"
+          className="pendo-auth-footer-link inline-flex w-fit rounded-full bg-[#f8f3eb] px-5 py-3 text-sm font-black text-[#181414] transition hover:bg-[#e8ddce]"
         >
           {PENDO_INSTAGRAM_HANDLE}
         </a>
@@ -544,14 +548,14 @@ function AuthPanel({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.55, delay: 0.1, ease: 'easeOut' }}
-      className="rounded-[30px] border border-[#eee8d5] bg-[#eee8d5]/95 p-6 shadow-[0_24px_70px_rgba(0,43,54,0.18)] backdrop-blur md:p-8"
+      className="pendo-auth-panel rounded-[30px] border border-[#eee8d5] bg-[#eee8d5]/95 p-6 shadow-[0_24px_70px_rgba(0,43,54,0.18)] backdrop-blur md:p-8"
     >
       <div className="mb-7 flex items-center justify-between gap-5">
         <div>
-          <h2 className="text-4xl font-black text-[#002b36]">
+          <h2 className="pendo-auth-panel-title text-4xl font-black text-[#002b36]">
             {mode === 'login' ? 'Log in' : 'Sign up'}
           </h2>
-          <p className="mt-2 text-base font-medium text-[#657b83]">
+          <p className="pendo-auth-panel-copy mt-2 text-base font-medium text-[#657b83]">
             {mode === 'login'
               ? "Welcome back. Let's get you moving."
               : 'Create your Pendo account.'}
@@ -566,19 +570,19 @@ function AuthPanel({
 
       <div className="space-y-4">
         {fieldErrors.general && (
-          <div className="rounded-2xl bg-[#dc322f]/10 border border-[#dc322f] p-4 text-sm font-bold text-[#cb4b16] shadow-sm">
+          <div className="pendo-auth-error rounded-2xl bg-[#dc322f]/10 border border-[#dc322f] p-4 text-sm font-bold text-[#cb4b16] shadow-sm">
             {fieldErrors.general}
           </div>
         )}
 
-        <label className="block text-sm font-black text-[#002b36]">
+        <label className="pendo-auth-label block text-sm font-black text-[#002b36]">
           Email
           <span
-            className={`mt-2 flex h-12 items-center gap-3 rounded-2xl border bg-[#fdf6e3] px-4 ${
+            className={`pendo-auth-field mt-2 flex h-12 items-center gap-3 rounded-2xl border bg-[#fdf6e3] px-4 ${
               fieldErrors.email ? 'border-[#dc322f]' : 'border-[#93a1a1]'
             }`}
           >
-            <Mail className="h-5 w-5 text-[#657b83]" />
+            <Mail className="pendo-auth-field-icon h-5 w-5 text-[#657b83]" />
             <input
               value={email}
               onChange={event => {
@@ -590,7 +594,7 @@ function AuthPanel({
               autoComplete="email"
               aria-invalid={fieldErrors.email ? true : undefined}
               placeholder="you@example.com"
-              className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-[#002b36] outline-none placeholder:text-[#93a1a1]"
+              className="pendo-auth-input min-w-0 flex-1 bg-transparent text-sm font-semibold text-[#002b36] outline-none placeholder:text-[#93a1a1]"
             />
           </span>
         </label>
@@ -598,14 +602,14 @@ function AuthPanel({
           <p className="-mt-2 text-xs font-bold text-[#dc322f]">{fieldErrors.email}</p>
         )}
 
-        <label className="block text-sm font-black text-[#002b36]">
+        <label className="pendo-auth-label block text-sm font-black text-[#002b36]">
           Password
           <span
-            className={`mt-2 flex h-12 items-center gap-3 rounded-2xl border bg-[#fdf6e3] px-4 ${
+            className={`pendo-auth-field mt-2 flex h-12 items-center gap-3 rounded-2xl border bg-[#fdf6e3] px-4 ${
               fieldErrors.password ? 'border-[#dc322f]' : 'border-[#93a1a1]'
             }`}
           >
-            <LockKeyhole className="h-5 w-5 text-[#657b83]" />
+            <LockKeyhole className="pendo-auth-field-icon h-5 w-5 text-[#657b83]" />
             <input
               value={password}
               onChange={event => {
@@ -620,12 +624,12 @@ function AuthPanel({
               autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
               aria-invalid={fieldErrors.password ? true : undefined}
               placeholder="Enter your password"
-              className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-[#002b36] outline-none placeholder:text-[#93a1a1]"
+              className="pendo-auth-input min-w-0 flex-1 bg-transparent text-sm font-semibold text-[#002b36] outline-none placeholder:text-[#93a1a1]"
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-[#657b83] transition hover:text-[#002b36]"
+              className="pendo-auth-password-toggle text-[#657b83] transition hover:text-[#002b36]"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -650,15 +654,15 @@ function AuthPanel({
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="block overflow-hidden text-sm font-black text-[#002b36]"
+              className="pendo-auth-label block overflow-hidden text-sm font-black text-[#002b36]"
             >
               Display name
               <span
-                className={`mt-2 flex h-12 items-center gap-3 rounded-2xl border bg-[#fdf6e3] px-4 ${
+                className={`pendo-auth-field mt-2 flex h-12 items-center gap-3 rounded-2xl border bg-[#fdf6e3] px-4 ${
                   fieldErrors.codename ? 'border-[#dc322f]' : 'border-[#93a1a1]'
                 }`}
               >
-                <Users className="h-5 w-5 text-[#657b83]" />
+                <Users className="pendo-auth-field-icon h-5 w-5 text-[#657b83]" />
                 <input
                   value={codename}
                   onChange={event => {
@@ -670,7 +674,7 @@ function AuthPanel({
                   autoComplete="nickname"
                   aria-invalid={fieldErrors.codename ? true : undefined}
                   placeholder="Your name"
-                  className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-[#002b36] outline-none placeholder:text-[#93a1a1]"
+                  className="pendo-auth-input min-w-0 flex-1 bg-transparent text-sm font-semibold text-[#002b36] outline-none placeholder:text-[#93a1a1]"
                 />
               </span>
               {fieldErrors.codename && (
@@ -687,7 +691,7 @@ function AuthPanel({
           whileHover={{ scale: submitDisabled ? 1 : 1.02 }}
           whileTap={{ scale: submitDisabled ? 1 : 0.98 }}
           layout
-          className="mt-2 flex h-14 w-full items-center justify-center gap-3 rounded-full bg-[#dc322f] text-base font-black text-white shadow-[0_14px_28px_rgba(220,50,47,0.32)] transition-colors hover:bg-[#cb4b16] disabled:cursor-not-allowed disabled:opacity-60"
+          className="pendo-auth-submit mt-2 flex h-14 w-full items-center justify-center gap-3 rounded-full bg-[#dc322f] text-base font-black text-white shadow-[0_14px_28px_rgba(220,50,47,0.32)] transition-colors hover:bg-[#cb4b16] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {redirecting
             ? 'Opening...'
@@ -705,7 +709,7 @@ function AuthPanel({
           )}
         </motion.button>
 
-        <div className="flex items-center justify-center gap-2 pt-2 text-sm font-semibold text-[#657b83]">
+        <div className="pendo-auth-switch flex items-center justify-center gap-2 pt-2 text-sm font-semibold text-[#657b83]">
           <span>{mode === 'login' ? 'New here?' : 'Already moving?'}</span>
           <button
             type="button"
@@ -713,7 +717,7 @@ function AuthPanel({
               setMode(mode === 'login' ? 'signup' : 'login');
               setCodename('');
             }}
-            className="font-black text-[#dc322f] transition hover:text-[#cb4b16]"
+            className="pendo-auth-switch-link font-black text-[#dc322f] transition hover:text-[#cb4b16]"
           >
             {mode === 'login' ? 'Sign up' : 'Log in'}
           </button>

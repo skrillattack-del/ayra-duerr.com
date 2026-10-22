@@ -210,12 +210,12 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
 
   if (!isMounted) return null
 
-  const sidebarWidth = isCollapsed ? 'w-20' : 'w-64'
+  const sidebarWidth = isCollapsed ? 'w-[84px]' : 'w-[232px]'
 
   return (
     <>
       <aside
-        className={`fixed left-0 top-0 h-full ${sidebarWidth} bg-clean-sidebar border-r border-clean-border flex-col z-30 transition-all duration-300 hidden md:flex`}
+        className={`pendo-sidebar fixed left-0 top-0 h-full ${sidebarWidth} flex-col z-30 transition-all duration-300 hidden md:flex`}
       >
         <SidebarLogo isCollapsed={isCollapsed} onToggleCollapse={onToggleCollapse} />
 

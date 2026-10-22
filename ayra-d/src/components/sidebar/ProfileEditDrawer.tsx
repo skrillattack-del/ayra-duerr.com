@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Camera, Loader2, X } from 'lucide-react'
 import { mediaUrl } from '@/lib/media'
+import { ACCEPT_IMAGES, isAcceptedImage, isHeic, formatLabel } from '@/lib/imageFormats'
 
 interface ProfileEditDrawerProps {
   isOpen: boolean
@@ -77,10 +78,17 @@ export function ProfileEditDrawer({
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    // Guard: extension-based check catches HEIC files with empty MIME type on iOS
+    if (!isAcceptedImage(file)) {
+      e.target.value = ''
+      return
+    }
     try {
       await onAvatarChange(file)
     } catch {
       // Error handled by parent
+    } finally {
+      e.target.value = ''
     }
   }
 

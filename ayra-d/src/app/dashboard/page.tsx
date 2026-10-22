@@ -1,156 +1,367 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
+import type { LucideIcon } from 'lucide-react'
 import {
-  Activity,
-  Apple,
+  ArrowRight,
+  BarChart3,
+  Bone,
   CalendarDays,
-  Dumbbell,
-  LineChart,
-  MessageCircle,
-  Plus,
+  Check,
+  GraduationCap,
+  HeartPulse,
+  Image as ImageIcon,
+  PawPrint,
+  Smile,
   Trophy,
-  Users,
+  Utensils,
+  UsersRound,
 } from 'lucide-react'
 
-function initials(name: string) {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .map((p) => p[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase()
+function IconBubble({ icon: Icon }: { icon: LucideIcon }) {
+  return (
+    <span className="pendo-icon-bubble" aria-hidden="true">
+      <Icon className="h-5 w-5" strokeWidth={2.2} />
+    </span>
+  )
 }
 
-function SectionCard({
+function OpenLink({ href, children }: { href: string; children?: React.ReactNode }) {
+  return (
+    <Link href={href} className="pendo-open-link">
+      {children || 'Open'} <ArrowRight className="h-4 w-4" strokeWidth={2.3} />
+    </Link>
+  )
+}
+
+function StatCard({
+  icon,
+  label,
   title,
-  icon: Icon,
+  detail,
   href,
   children,
-  action,
 }: {
+  icon: LucideIcon
+  label: string
   title: string
-  icon: React.ElementType
+  detail: string
+  href?: string
+  children?: React.ReactNode
+}) {
+  const content = (
+    <>
+      <IconBubble icon={icon} />
+      <div className="min-w-0 flex-1">
+        <p className="pendo-eyebrow">{label}</p>
+        <p className="pendo-stat-title">{title}</p>
+        <p className="pendo-stat-detail">{detail}</p>
+      </div>
+      {children}
+      {href && <ArrowRight className="h-5 w-5 shrink-0 text-[#b9cbe4]" />}
+    </>
+  )
+
+  return href ? (
+    <Link href={href} className="pendo-stat-card">
+      {content}
+    </Link>
+  ) : (
+    <div className="pendo-stat-card">{content}</div>
+  )
+}
+
+function FeatureCard({
+  href,
+  icon,
+  title,
+  subtitle,
+  description,
+  image,
+  imageAlt,
+  className = '',
+}: {
   href: string
-  children: React.ReactNode
-  action?: { label: string; href: string }
+  icon: LucideIcon
+  title: string
+  subtitle: string
+  description: string
+  image: string
+  imageAlt: string
+  className?: string
 }) {
   return (
-    <div className="bg-white rounded-3xl p-6 border border-clean-border shadow-sm flex flex-col h-full">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-clean-accent/10 text-clean-accent flex items-center justify-center">
-            <Icon className="w-5 h-5" />
+    <div className={`pendo-feature-card ${className}`}>
+      <div className="relative z-10 flex h-full flex-col">
+        <div className="flex items-start gap-3">
+          <IconBubble icon={icon} />
+          <div>
+            <h2 className="pendo-card-title">{title}</h2>
+            <p className="pendo-card-subtitle">{subtitle}</p>
           </div>
-          <h2 className="font-bold text-lg text-clean-text">{title}</h2>
         </div>
-        {action && (
-          <Link
-            href={action.href}
-            className="text-xs font-bold text-clean-accent hover:opacity-80 flex items-center gap-1"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            {action.label}
-          </Link>
-        )}
+        <p className="pendo-card-description">{description}</p>
+        <OpenLink href={href}>{`Open ${title}`}</OpenLink>
       </div>
-      <div className="flex-1">{children}</div>
-      <Link
-        href={href}
-        className="mt-4 text-sm font-semibold text-clean-muted hover:text-clean-text flex items-center gap-1 transition-colors"
-      >
-        Open {title} <span className="text-lg leading-none">→</span>
-      </Link>
+      <Image
+        src={image}
+        alt={imageAlt}
+        fill
+        sizes="(max-width: 900px) 100vw, 30vw"
+        className="pendo-feature-image"
+      />
+      <div className="pendo-feature-shade" aria-hidden="true" />
     </div>
   )
 }
 
-function EmptyState({ message, icon: Icon }: { message: string; icon: React.ElementType }) {
+function SimpleCard({
+  href,
+  icon,
+  title,
+  subtitle,
+  description,
+  children,
+  className = '',
+}: {
+  href: string
+  icon: LucideIcon
+  title: string
+  subtitle: string
+  description: string
+  children?: React.ReactNode
+  className?: string
+}) {
   return (
-    <div className="flex flex-col items-center justify-center h-32 text-center text-clean-muted">
-      <Icon className="w-8 h-8 mb-2 opacity-40" />
-      <p className="text-sm">{message}</p>
+    <div className={`pendo-simple-card ${className}`}>
+      <div className="relative z-10 flex h-full min-w-0 flex-col">
+        <div className="flex items-start gap-3">
+          <IconBubble icon={icon} />
+          <div className="min-w-0">
+            <h2 className="pendo-card-title">{title}</h2>
+            <p className="pendo-card-subtitle">{subtitle}</p>
+          </div>
+        </div>
+        <p className="pendo-card-description">{description}</p>
+        <OpenLink href={href}>{`Open ${title}`}</OpenLink>
+      </div>
+      {children}
+    </div>
+  )
+}
+
+function ProgressVisual() {
+  return (
+    <div className="pendo-progress-visual" aria-hidden="true">
+      <ArrowRight className="pendo-progress-arrow" />
+      <div className="pendo-progress-bars">
+        <span />
+        <span />
+        <span />
+        <span />
+      </div>
+    </div>
+  )
+}
+
+function PhotoStack() {
+  return (
+    <div className="pendo-photo-stack" aria-hidden="true">
+      <div className="pendo-photo pendo-photo-back">
+        <Image src="/images/pendo/gallery/heart-tag.png" alt="" fill sizes="120px" />
+      </div>
+      <div className="pendo-photo pendo-photo-front">
+        <Image src="/images/pendo/gallery/green-bandana.png" alt="" fill sizes="120px" />
+      </div>
+      <span className="pendo-photo-heart">♡</span>
     </div>
   )
 }
 
 export default function DashboardOverview() {
   const { user } = useAuth()
-
+  const firstName = user?.display_name?.trim().split(/\s+/)[0] || 'John'
+  const profileName = user?.display_name || 'john'
   const isAdmin = user?.role === 'ADMIN'
-  const isPaid = user?.membership_tier === 'PAID' || isAdmin
 
   return (
-    <div className="space-y-6">
-      {/* Quick stat row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl p-5 border border-clean-border shadow-sm">
-          <p className="text-sm text-clean-muted mb-1">This week</p>
-          <p className="text-2xl font-bold text-clean-text">0</p>
-          <p className="text-xs text-clean-muted mt-1">workouts logged</p>
-        </div>
-        <div className="bg-white rounded-2xl p-5 border border-clean-border shadow-sm">
-          <p className="text-sm text-clean-muted mb-1">Next up</p>
-          <p className="text-2xl font-bold text-clean-text">—</p>
-          <p className="text-xs text-clean-muted mt-1">scheduled session</p>
-        </div>
-        <div className="bg-white rounded-2xl p-5 border border-clean-border shadow-sm">
-          <p className="text-sm text-clean-muted mb-1">Meal today</p>
-          <p className="text-2xl font-bold text-clean-text">—</p>
-          <p className="text-xs text-clean-muted mt-1">posted by admin</p>
-        </div>
-        <div className="bg-white rounded-2xl p-5 border border-clean-border shadow-sm">
-          <p className="text-sm text-clean-muted mb-1">Community</p>
-          <p className="text-2xl font-bold text-clean-text">0</p>
-          <p className="text-xs text-clean-muted mt-1">new mentions</p>
-        </div>
-      </div>
+    <div className="pendo-dashboard" data-testid="pendo-dashboard">
+      <section className="pendo-stat-grid" aria-label="Today at a glance">
+        <StatCard icon={PawPrint} label="This week’s walks" title="4" detail="walks completed">
+          <div className="pendo-mini-bars" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+            <span />
+          </div>
+        </StatCard>
+        <StatCard
+          icon={CalendarDays}
+          label="Next up"
+          title="Evening Walk"
+          detail="Today at 5:00 PM"
+          href="/dashboard/workouts"
+        />
+        <StatCard
+          icon={Utensils}
+          label="Meal today"
+          title="Breakfast"
+          detail="1 cup · 8:00 AM"
+          href="/dashboard/nutrition"
+        />
+        <StatCard icon={Smile} label="Pendo’s mood" title="Happy" detail="Tail’s up! 💗">
+          <span className="pendo-mood-paw" aria-hidden="true">
+            ✦
+          </span>
+        </StatCard>
+      </section>
 
-      {/* Main grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <SectionCard title="Workouts" icon={Dumbbell} href="/dashboard/workouts" action={{ label: 'Log', href: '/dashboard/workouts' }}>
-          <EmptyState message="No workouts logged yet. Build a template or log a freestyle session." icon={Dumbbell} />
-        </SectionCard>
-
-        <SectionCard title="Programs" icon={CalendarDays} href="/dashboard/programs">
-          <EmptyState message="No enrolled programs. Browse available programs to add structure to your training." icon={CalendarDays} />
-        </SectionCard>
-
-        <SectionCard title="Nutrition" icon={Apple} href="/dashboard/nutrition">
-          <EmptyState message="No meal of the day posted yet. Check back soon." icon={Apple} />
-        </SectionCard>
-
-        <SectionCard title="Progress" icon={LineChart} href="/dashboard/progress">
-          <EmptyState message="Track progress logs here once you start logging workouts and challenges." icon={LineChart} />
-        </SectionCard>
-
-        <SectionCard title="Community" icon={Users} href="/dashboard/community">
-          <EmptyState message="Join the conversation in squads and channels." icon={MessageCircle} />
-        </SectionCard>
-
-        <SectionCard title="Challenges" icon={Trophy} href="/dashboard/challenges">
-          <EmptyState message="Challenges are coming soon." icon={Trophy} />
-        </SectionCard>
-      </div>
-
-      {isAdmin && (
-        <div className="bg-white rounded-3xl p-6 border-2 border-clean-border shadow-sm">
-          <h3 className="font-bold text-lg mb-2 text-clean-text flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-clean-accent"></span>
-            Admin quick actions
-          </h3>
-          <div className="flex flex-wrap gap-3 mt-4">
-            <Link href="/admin" className="px-4 py-2 bg-clean-text text-white rounded-xl text-sm font-bold hover:bg-clean-text/80 transition-colors">
-              Admin console
-            </Link>
-            <Link href="/dashboard/nutrition" className="px-4 py-2 bg-clean-hover text-clean-text rounded-xl text-sm font-bold hover:bg-gray-200 transition-colors">
-              Post meal of the day
+      <section className="pendo-feature-grid" aria-label="Pendo’s day">
+        <div className="pendo-hero-card">
+          <div className="pendo-hero-copy">
+            <h1>
+              Good
+              <br />
+              morning, {firstName}!
+            </h1>
+            <p className="pendo-hero-lead">Pendo’s ready for a great day!</p>
+            <p className="pendo-hero-description">
+              Walks, good food, belly rubs, and new adventures ahead.
+            </p>
+            <Link href="/dashboard/workouts" className="pendo-primary-button">
+              See today&apos;s plan <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
+          <Image
+            src="/images/pendo/gallery/hero-grass.png"
+            alt="Pendo relaxing in the grass"
+            fill
+            priority
+            sizes="(max-width: 900px) 100vw, 45vw"
+            className="pendo-hero-image"
+          />
+          <div className="pendo-hero-edge" aria-hidden="true" />
+          <div className="pendo-hero-note" aria-hidden="true">
+            <span>♡</span>
+            Same day, more adventures!
+            <small>✦</small>
+          </div>
+        </div>
+
+        <FeatureCard
+          href="/dashboard/workouts"
+          icon={PawPrint}
+          title="Walks"
+          subtitle="Explore together"
+          description="Log walks, discover new routes, and keep Pendo happy and healthy."
+          image="/images/pendo/gallery/hero-grass.png"
+          imageAlt="Pendo enjoying a sunny walk"
+        />
+        <FeatureCard
+          href="/dashboard/programs"
+          icon={GraduationCap}
+          title="Training & Tricks"
+          subtitle="A smarter, happier Pendo"
+          description="Teach new tricks, follow training programs, and celebrate progress."
+          image="/images/pendo/pendo-happy.png"
+          imageAlt="Pendo ready to learn a new trick"
+        />
+      </section>
+
+      <section className="pendo-simple-grid pendo-simple-grid--three" aria-label="Pendo’s tools">
+        <SimpleCard
+          href="/dashboard/nutrition"
+          icon={Utensils}
+          title="Nutrition"
+          subtitle="Fuel for more good days"
+          description="Track meals, recipes, and treats to keep Pendo healthy and strong."
+          className="pendo-nutrition-card"
+        >
+          <div className="pendo-bowl" aria-hidden="true">
+            <div className="pendo-bowl-food">••••••</div>
+            <div className="pendo-bowl-base" />
+            <Bone className="pendo-bowl-bone" />
+          </div>
+        </SimpleCard>
+        <SimpleCard
+          href="/dashboard/progress"
+          icon={BarChart3}
+          title="Progress"
+          subtitle="See the journey"
+          description="Track walks, training, weight, and milestones all in one place."
+        >
+          <ProgressVisual />
+        </SimpleCard>
+        <SimpleCard
+          href="/"
+          icon={ImageIcon}
+          title="Photo Diary"
+          subtitle="Capture the moments"
+          description="Save and share Pendo’s best moments, big and small."
+        >
+          <PhotoStack />
+        </SimpleCard>
+      </section>
+
+      <section className="pendo-simple-grid pendo-simple-grid--four" aria-label="More Pendo features">
+        <SimpleCard
+          href="/dashboard/nutrition"
+          icon={HeartPulse}
+          title="Health & Vet"
+          subtitle="A healthy Pendo is a happy Pendo"
+          description="Track vet visits, vaccinations, medications, and more."
+        >
+          <div className="pendo-health-kit" aria-hidden="true">
+            <span>+</span>
+          </div>
+        </SimpleCard>
+        <SimpleCard
+          href="/dashboard/community"
+          icon={UsersRound}
+          title="Community"
+          subtitle="Dog people, Pendo people"
+          description="Join a community of poodle lovers. Share stories, get advice, and make new friends."
+        >
+          <div className="pendo-community-doodle" aria-hidden="true">
+            ♡
+            <small>♧</small>
+          </div>
+        </SimpleCard>
+        <SimpleCard
+          href="/dashboard/challenges"
+          icon={Trophy}
+          title="Challenges"
+          subtitle="Small steps, big adventures"
+          description="Take on fun challenges and earn badges with Pendo."
+        >
+          <div className="pendo-challenge-badge" aria-hidden="true">
+            <PawPrint className="h-7 w-7" />
+          </div>
+        </SimpleCard>
+        <SimpleCard
+          href="/dashboard/challenges"
+          icon={Bone}
+          title="Toy Box"
+          subtitle="Play, discover, repeat"
+          description="Keep track of Pendo’s favorite toys and find new ones."
+        >
+          <div className="pendo-toy-visual" aria-hidden="true">
+            <span className="pendo-ball" />
+            <Bone className="h-10 w-10 rotate-[-20deg] text-[#f6c58b]" />
+          </div>
+        </SimpleCard>
+      </section>
+
+      {isAdmin && (
+        <div className="pendo-admin-note">
+          <Check className="h-4 w-4" />
+          Admin tools are ready in your settings menu.
         </div>
       )}
+
+      <span className="sr-only">Signed in as {profileName}</span>
     </div>
   )
 }

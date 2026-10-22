@@ -134,9 +134,4 @@ export const storageService = {
       contentLength: response.ContentLength,
     };
   },
-
-  generateAvatarKey(userId: string, filename: string): string {
-    const ext = filename.split('.').pop() || 'jpg';
-    return `avatars/${userId}.${ext}`;
-  },
 };

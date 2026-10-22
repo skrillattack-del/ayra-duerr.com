@@ -4,9 +4,14 @@ import multer from 'multer';
 import { authenticateJWT, requireAdmin } from '../middleware/authMiddleware';
 import { nutritionRepository } from '../repositories/nutritionRepository';
 import { storageService } from '../services/storageService';
+import { createImageFileFilter, processImage } from '../services/imageService';
 
 const router: Router = Router();
-const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 5 * 1024 * 1024 } });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: createImageFileFilter(),
+});
 
 const optionalNumber = z.preprocess((value) => {
   if (value === undefined || value === null || value === '') return undefined;
@@ -47,10 +52,22 @@ const logSchema = z.object({
   notes: z.string().optional(),
 });
 
-function mealKey(filename: string) {
+function mealKey(ext: string) {
   const randomId = Math.random().toString(36).substring(2, 9);
-  const ext = filename.split('.').pop() || 'jpg';
   return `meals/${Date.now()}-${randomId}.${ext}`;
+}
+
+/**
+ * Process an uploaded meal image: convert HEIC/HEIF/AVIF/TIFF/BMP → JPEG,
+ * resize to max 1200px, strip EXIF. Returns { key, mimetype } or throws.
+ */
+async function processMealImage(file: { buffer: Buffer; mimetype: string; originalname: string }): Promise<{ key: string; mimetype: string }> {
+  const processed = await processImage(file.buffer, file.mimetype, file.originalname, {
+    maxDimension: 1200,
+  });
+  const key = mealKey(processed.ext);
+  await storageService.uploadFile(key, processed.buffer, processed.mimetype);
+  return { key, mimetype: processed.mimetype };
 }
 
 /**
@@ -103,9 +120,12 @@ router.post('/meals', authenticateJWT, requireAdmin, upload.single('image'), asy
 
     let imageUrl: string | undefined;
     if (req.file) {
-      const key = mealKey(req.file.originalname);
-      await storageService.uploadFile(key, req.file.buffer, req.file.mimetype);
-      imageUrl = key;
+      try {
+        const result = await processMealImage(req.file);
+        imageUrl = result.key;
+      } catch (err: any) {
+        return res.status(400).json({ error: err.message || 'Failed to process image' });
+      }
     }
 
     const meal = await nutritionRepository.createMeal({
@@ -134,9 +154,12 @@ router.put('/meals/:id', authenticateJWT, requireAdmin, upload.single('image'), 
 
     let imageUrl: string | undefined;
     if (req.file) {
-      const key = mealKey(req.file.originalname);
-      await storageService.uploadFile(key, req.file.buffer, req.file.mimetype);
-      imageUrl = key;
+      try {
+        const result = await processMealImage(req.file);
+        imageUrl = result.key;
+      } catch (err: any) {
+        return res.status(400).json({ error: err.message || 'Failed to process image' });
+      }
     }
 
     const meal = await nutritionRepository.updateMeal(req.params.id, {

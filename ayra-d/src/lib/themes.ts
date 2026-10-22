@@ -6,11 +6,14 @@
  */
 
 export type ThemeId = 'cyberpunk' | 'retro' | 'lava' | 'mana' | 'mythic'
+export type ColorMode = 'light' | 'dark'
 
 export const THEME_IDS = ['cyberpunk', 'retro', 'lava', 'mana', 'mythic'] as const satisfies readonly ThemeId[]
 
 export const DEFAULT_THEME: ThemeId = 'cyberpunk'
 export const THEME_STORAGE_KEY = 'gonga-theme'
+export const DEFAULT_COLOR_MODE: ColorMode = 'dark'
+export const COLOR_MODE_STORAGE_KEY = 'pendo-color-mode'
 
 export interface ThemeSwatches {
   bg: string
@@ -138,11 +141,15 @@ export function isThemeId(value: unknown): value is ThemeId {
   return typeof value === 'string' && (THEME_IDS as readonly string[]).includes(value)
 }
 
+export function isColorMode(value: unknown): value is ColorMode {
+  return value === 'light' || value === 'dark'
+}
+
 export function getThemePreset(id: ThemeId): ThemePreset {
   return THEME_BY_ID.get(id) ?? THEME_BY_ID.get(DEFAULT_THEME)!
 }
 
 /** Script used in the root layout to apply the cached theme before hydration. */
 export function getThemeInlineScript(): string {
-  return `try{var t=localStorage.getItem('${THEME_STORAGE_KEY}');if(${JSON.stringify(THEME_IDS)}.indexOf(t)!==-1){document.documentElement.dataset.theme=t;}}catch(e){}`
+  return `try{var t=localStorage.getItem('${THEME_STORAGE_KEY}');if(${JSON.stringify(THEME_IDS)}.indexOf(t)!==-1){document.documentElement.dataset.theme=t;}var m=localStorage.getItem('${COLOR_MODE_STORAGE_KEY}');document.documentElement.dataset.colorMode=m==='light'?'light':'dark';}catch(e){document.documentElement.dataset.colorMode='dark';}`
 }

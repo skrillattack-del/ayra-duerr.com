@@ -65,8 +65,17 @@ export const initRoutes = (app: Express) => {
         '.png': 'image/png',
         '.gif': 'image/gif',
         '.webp': 'image/webp',
+        // Legacy / fallback formats — normally converted to JPEG on upload,
+        // but may exist from before conversion was added or if sharp is unavailable
+        '.heic': 'image/heic',
+        '.heif': 'image/heif',
+        '.avif': 'image/avif',
+        '.tif': 'image/tiff',
+        '.tiff': 'image/tiff',
+        '.bmp': 'image/bmp',
         '.mp4': 'video/mp4',
         '.webm': 'video/webm',
+        '.mov': 'video/quicktime',
       };
       
       res.set('Cache-Control', 'private, max-age=3600');
