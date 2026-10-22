@@ -88,15 +88,15 @@ const toolHighlights = [
   { title: 'Train together', body: 'Move with friends.', Icon: Users, color: '#b58900' },
 ];
 
-export default function GongaFitLanding() {
+export default function PendoLanding() {
   return (
     <Suspense fallback={<div className="min-h-screen bg-[#fdf6e3]" />}>
-      <GongaFitLandingInner />
+      <PendoLandingInner />
     </Suspense>
   );
 }
 
-function GongaFitLandingInner() {
+function PendoLandingInner() {
   const [mode, setMode] = useState<AuthMode>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -156,7 +156,7 @@ function GongaFitLandingInner() {
       toast({
         status: 'INFO',
         title: 'LOGIN REQUIRED',
-        message: 'Authenticate to access GongaFit.',
+        message: 'Authenticate to access Pendo.',
         sector: 'AUTH',
       });
     } else if (reason === 'signed-out') {
@@ -265,7 +265,7 @@ function GongaFitLandingInner() {
         toast({
           status: 'OK',
           title: 'ACCOUNT READY',
-          message: 'Your GongaFit space is ready.',
+          message: 'Your Pendo space is ready.',
           sector: getEmailSector(validated.email),
         });
       }
@@ -286,6 +286,11 @@ function GongaFitLandingInner() {
 
   const handleEnterSubmit = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') handleSubmit();
+  };
+
+  const handleGuest = () => {
+    sessionStorage.setItem('pendo-guest', '1');
+    router.push('/dashboard');
   };
 
   return (
@@ -313,14 +318,14 @@ function GongaFitLandingInner() {
               <button
                 type="button"
                 className="flex items-center gap-3"
-                aria-label="GongaFit home"
+                aria-label="Pendo home"
                 onClick={() => router.push('/')}
               >
                 <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#dc322f] text-3xl font-black text-white shadow-[0_10px_20px_rgba(220,50,47,0.28)]">
-                  G
+                  P
                 </span>
                 <span className="text-2xl font-black text-[#002b36]">
-                  Gonga<span className="text-[#dc322f]">Fit</span>
+                  Pendo<span className="text-[#dc322f]"> the Poodle</span>
                 </span>
               </button>
 
@@ -383,6 +388,13 @@ function GongaFitLandingInner() {
                     className="inline-flex h-14 items-center rounded-full border border-[#93a1a1] bg-[#eee8d5]/90 px-6 text-base font-black text-[#002b36] shadow-[0_10px_24px_rgba(0,43,54,0.10)] transition hover:-translate-y-0.5 hover:border-[#dc322f]"
                   >
                     Log in
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleGuest}
+                    className="inline-flex h-14 items-center gap-2 rounded-full border border-dashed border-[#93a1a1] bg-transparent px-6 text-base font-semibold text-[#657b83] transition hover:-translate-y-0.5 hover:border-[#b58900] hover:text-[#b58900]"
+                  >
+                    Continue as guest
                   </button>
                 </motion.div>
 
@@ -652,7 +664,7 @@ function AuthPanel({
           <p className="mt-2 text-base font-medium text-[#657b83]">
             {mode === 'login'
               ? "Welcome back. Let's get you moving."
-              : 'Create your GongaFit account.'}
+              : 'Create your Pendo account.'}
           </p>
         </div>
         <img

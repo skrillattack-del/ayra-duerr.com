@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Activity, Dumbbell, CalendarDays, Apple, LineChart, Users, Trophy, Settings } from 'lucide-react'
+import { Activity, LineChart, Users, Settings } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 export interface NavItem {
@@ -13,12 +13,8 @@ export interface NavItem {
 
 const navItems: NavItem[] = [
   { label: 'Dashboard', href: '/dashboard', icon: Activity },
-  { label: 'Workouts', href: '/dashboard/workouts', icon: Dumbbell },
-  { label: 'Programs', href: '/dashboard/programs', icon: CalendarDays },
-  { label: 'Nutrition', href: '/dashboard/nutrition', icon: Apple },
   { label: 'Progress', href: '/dashboard/progress', icon: LineChart },
   { label: 'Community', href: '/dashboard/community', icon: Users },
-  { label: 'Challenges', href: '/dashboard/challenges', icon: Trophy },
 ]
 
 interface SidebarNavProps {

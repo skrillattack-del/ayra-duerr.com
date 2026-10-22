@@ -37,7 +37,7 @@ export default function ContactPage() {
           </Link>
           <div className="flex items-center gap-3">
             <Image src="/images/pendo/pendo-portrait.png" alt="Pendo the doodle" width={32} height={32} className="rounded-full object-cover" />
-            <span className="font-black text-xl tracking-tight hidden sm:block">GONGAFIT</span>
+            <span className="font-black text-xl tracking-tight hidden sm:block">PENDO</span>
           </div>
         </div>
       </nav>

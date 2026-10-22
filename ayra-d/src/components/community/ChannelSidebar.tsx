@@ -62,8 +62,8 @@ export function ChannelSidebar({
   return (
     <aside className={cn('w-64 bg-clean-sidebar border-r border-clean-border flex flex-col overflow-hidden', className)}>
       <div className="flex items-center gap-2 px-4 h-14 border-b border-clean-border shrink-0">
-        <div className="w-8 h-8 rounded-lg bg-clean-accent text-white flex items-center justify-center font-bold">G</div>
-        <span className="font-bold text-clean-text text-sm">GongaFit Community</span>
+        <div className="w-8 h-8 rounded-lg bg-clean-accent text-white flex items-center justify-center font-bold">P</div>
+        <span className="font-bold text-clean-text text-sm">Pendo Community</span>
       </div>
 
       <div className="flex-1 overflow-y-auto p-3 space-y-6">

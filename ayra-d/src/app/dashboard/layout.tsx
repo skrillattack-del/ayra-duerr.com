@@ -10,32 +10,21 @@ import { motion } from 'framer-motion'
 import { Sidebar } from '@/components/sidebar/Sidebar'
 import {
   Activity,
-  Apple,
-  CalendarDays,
-  Dumbbell,
   LineChart,
   Search,
   Settings,
-  Trophy,
   Users,
 } from 'lucide-react'
 
 const navItems = [
   { label: 'Dashboard', href: '/dashboard', icon: Activity },
-  { label: 'Workouts', href: '/dashboard/workouts', icon: Dumbbell },
-  { label: 'Programs', href: '/dashboard/programs', icon: CalendarDays },
-  { label: 'Nutrition', href: '/dashboard/nutrition', icon: Apple },
   { label: 'Progress', href: '/dashboard/progress', icon: LineChart },
   { label: 'Community', href: '/dashboard/community', icon: Users },
-  { label: 'Challenges', href: '/dashboard/challenges', icon: Trophy },
 ]
 
 const bottomNavItems = [
   { label: 'Home', href: '/dashboard', icon: Activity },
-  { label: 'Workouts', href: '/dashboard/workouts', icon: Dumbbell },
-  { label: 'Programs', href: '/dashboard/programs', icon: CalendarDays },
   { label: 'Community', href: '/dashboard/community', icon: Users },
-  { label: 'Challenges', href: '/dashboard/challenges', icon: Trophy },
   { label: 'Settings', href: '/dashboard/settings', icon: Settings },
 ]
 
@@ -46,7 +35,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   useEffect(() => {
-    const saved = localStorage.getItem('gongafit-sidebar-collapsed')
+    const saved = localStorage.getItem('pendo-sidebar-collapsed')
     if (saved) {
       setIsCollapsed(saved === 'true')
     }
@@ -55,7 +44,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const toggleCollapse = () => {
     setIsCollapsed((prev) => {
       const next = !prev
-      localStorage.setItem('gongafit-sidebar-collapsed', next.toString())
+      localStorage.setItem('pendo-sidebar-collapsed', next.toString())
       return next
     })
   }

@@ -14,7 +14,7 @@ export function SidebarLogo({ isCollapsed, onToggleCollapse }: SidebarLogoProps)
     <div className="p-6 flex items-center justify-between overflow-hidden shrink-0">
       <Link href="/dashboard" className="flex items-center gap-3 group shrink-0">
         <div className="w-10 h-10 rounded-full bg-clean-accent flex items-center justify-center text-white font-bold text-lg shadow-sm transition-transform duration-300 group-hover:scale-105 shrink-0">
-          G
+          P
         </div>
         <AnimatePresence>
           {!isCollapsed && (
@@ -24,7 +24,7 @@ export function SidebarLogo({ isCollapsed, onToggleCollapse }: SidebarLogoProps)
               exit={{ opacity: 0, width: 0 }}
               className="text-xl font-bold tracking-tight whitespace-nowrap"
             >
-              GongaFit
+              Pendo
             </motion.span>
           )}
         </AnimatePresence>

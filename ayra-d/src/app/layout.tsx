@@ -8,8 +8,8 @@ import { getThemeInlineScript } from '@/lib/themes'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'GongaFit | Walk, play, rest with Pendo',
-  description: 'GongaFit fitness command center with Pendo the doodle — daily walks, play, and recovery.',
+  title: 'Pendo the Poodle | Walk, play, rest together',
+  description: 'Pendo the Poodle — your fluffy fitness companion for daily walks, play, and recovery.',
 }
 
 export default function RootLayout({

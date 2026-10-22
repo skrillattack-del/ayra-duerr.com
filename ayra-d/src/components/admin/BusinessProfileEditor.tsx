@@ -10,7 +10,7 @@ export default function BusinessProfileEditor() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [profile, setProfile] = useState<BusinessProfile>({
-    name: 'GongaFit',
+    name: 'Pendo the Poodle',
     address: '',
     phone: '',
     email: '',
@@ -96,7 +96,7 @@ export default function BusinessProfileEditor() {
               value={profile.name}
               onChange={handleChange}
               className="w-full bg-zinc-950 border border-zinc-800 rounded px-4 py-2 text-white focus:outline-none focus:border-emerald-500 transition-colors"
-              placeholder="e.g. GongaFit"
+              placeholder="e.g. Pendo the Poodle"
             />
           </div>
 
@@ -138,7 +138,7 @@ export default function BusinessProfileEditor() {
                 value={profile.email || ''}
                 onChange={handleChange}
                 className="w-full bg-zinc-950 border border-zinc-800 rounded px-4 py-2 text-white focus:outline-none focus:border-emerald-500 transition-colors"
-                placeholder="contact@gongafitness.com"
+                placeholder="contact@pendothepoodle.com"
               />
             </div>
           </div>

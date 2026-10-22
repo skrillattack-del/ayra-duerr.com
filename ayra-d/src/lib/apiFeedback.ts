@@ -45,7 +45,7 @@ export function mapApiErrorToToast(error: unknown, options: ApiToastOptions = {}
       title: 'CONNECTION LOST',
       message:
         process.env.NODE_ENV === 'production'
-          ? "Can't reach GongaFit right now. Please try again in a moment."
+          ? "Can't reach Pendo right now. Please try again in a moment."
           : 'Backend unreachable. Start the server and try again.',
       sector,
     }

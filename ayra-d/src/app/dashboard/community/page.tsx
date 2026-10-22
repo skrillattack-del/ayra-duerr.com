@@ -2,7 +2,7 @@
 
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Hash, Radio, Trophy, Crown, Megaphone, Users, MessageSquare, MessageCircle, Menu, X, LogOut, UserPlus } from 'lucide-react'
+import { Hash, Radio, Trophy, Crown, Megaphone, Users, MessageSquare, MessageCircle, Menu, X, LogOut, UserPlus, Lock } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/useAuth'
 import { useChannelFeed, useSquadFeed, useDirectFeed, usePresence, type Message } from '@/hooks'
@@ -315,8 +315,22 @@ function CommunityPageInner() {
       }
     : undefined
 
+  // ---- Guest mode ---------------------------------------------------------------
+  const [isGuest, setIsGuest] = useState(false)
+  useEffect(() => {
+    setIsGuest(sessionStorage.getItem('pendo-guest') === '1')
+  }, [])
+
   // ---- Loading gate ---------------------------------------------------------------
-  if (authLoading || !user) {
+  if (authLoading) {
+    return (
+      <div className="h-[calc(100vh-140px)] flex items-center justify-center text-clean-muted">
+        <MessageSquare className="w-8 h-8 animate-pulse" />
+      </div>
+    )
+  }
+
+  if (!user && !isGuest) {
     return (
       <div className="h-[calc(100vh-140px)] flex items-center justify-center text-clean-muted">
         <MessageSquare className="w-8 h-8 animate-pulse" />
@@ -456,6 +470,11 @@ function CommunityPageInner() {
 
   const activeSendReply =
     view?.type === 'channel' ? channelFeed.sendMessage : view?.type === 'squad' ? squadFeed.sendMessage : dmFeed.sendMessage
+
+  // ---- Guest: show lock overlay instead of live messaging ----------------------
+  if (isGuest) {
+    return <GuestLock />
+  }
 
   return (
     <div className="h-[calc(100vh-140px)] bg-white rounded-3xl border border-clean-border shadow-sm overflow-hidden flex relative">
@@ -687,5 +706,68 @@ function SquadMembersRail({
         </div>
       )}
     </aside>
+  )
+}
+
+// -----------------------------------------------------------------------------
+// Guest Lock — shown when the user enters as a guest
+// -----------------------------------------------------------------------------
+
+function GuestLock() {
+  const router = useRouter()
+
+  const handleSignIn = () => {
+    sessionStorage.removeItem('pendo-guest')
+    router.push('/')
+  }
+
+  const handleSignUp = () => {
+    sessionStorage.removeItem('pendo-guest')
+    router.push('/?mode=signup')
+  }
+
+  return (
+    <div className="h-[calc(100vh-140px)] flex flex-col items-center justify-center gap-6 bg-white rounded-3xl border border-clean-border shadow-sm px-6 text-center">
+      {/* Lock icon badge */}
+      <div className="relative">
+        <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-clean-accent/20 to-clean-accent/5 border border-clean-accent/20 flex items-center justify-center shadow-lg">
+          <Lock className="w-10 h-10 text-clean-accent" />
+        </div>
+        <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center text-base">
+          🐩
+        </div>
+      </div>
+
+      {/* Copy */}
+      <div className="max-w-sm space-y-2">
+        <h2 className="text-2xl font-black text-clean-text">Messages are for members</h2>
+        <p className="text-sm font-medium text-clean-muted leading-relaxed">
+          You're browsing as a guest. Create a free account to chat, join squads, and move with the Pendo community.
+        </p>
+      </div>
+
+      {/* Actions */}
+      <div className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-xs">
+        <button
+          type="button"
+          onClick={handleSignUp}
+          className="w-full flex items-center justify-center gap-2 h-12 rounded-2xl bg-clean-accent text-white text-sm font-black shadow-md hover:bg-clean-accent/90 transition-all hover:-translate-y-0.5"
+        >
+          <UserPlus className="w-4 h-4" />
+          Sign up — it's free
+        </button>
+        <button
+          type="button"
+          onClick={handleSignIn}
+          className="w-full flex items-center justify-center h-12 rounded-2xl border border-clean-border text-clean-muted text-sm font-semibold hover:border-clean-accent hover:text-clean-accent transition-all hover:-translate-y-0.5"
+        >
+          Log in
+        </button>
+      </div>
+
+      <p className="text-xs text-clean-muted/60">
+        You can still view other dashboard pages as a guest.
+      </p>
+    </div>
   )
 }
