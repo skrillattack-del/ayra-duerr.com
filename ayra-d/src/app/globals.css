@@ -1,0 +1,445 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   Site themes. The default mirrors the backend's cyberpunk fallback.
+   --clean-* keeps the existing app themed; --gonga-* is the public token API.
+   ========================================================================== */
+
+:root,
+[data-theme="cyberpunk"] {
+  --clean-bg: 5 9 20;
+  --clean-sidebar: 10 19 33;
+  --clean-accent: 255 61 154;
+  --clean-accent-soft: 186 255 24;
+  --clean-text: 247 248 252;
+  --clean-muted: 145 160 183;
+  --clean-border: 48 65 87;
+  --clean-hover: 20 34 56;
+  --gonga-bg: 5 9 20;
+  --gonga-surface: 10 19 33;
+  --gonga-surface-raised: 16 28 45;
+  --gonga-primary: 255 61 154;
+  --gonga-secondary: 186 255 24;
+  --gonga-text: 247 248 252;
+  --gonga-muted: 145 160 183;
+  --gonga-border: 48 65 87;
+}
+
+[data-theme="retro"] {
+  --clean-bg: 5 5 8;
+  --clean-sidebar: 17 16 26;
+  --clean-accent: 248 216 74;
+  --clean-accent-soft: 155 92 255;
+  --clean-text: 255 249 220;
+  --clean-muted: 170 162 189;
+  --clean-border: 58 49 80;
+  --clean-hover: 34 29 51;
+  --gonga-bg: 5 5 8;
+  --gonga-surface: 17 16 26;
+  --gonga-surface-raised: 26 23 40;
+  --gonga-primary: 248 216 74;
+  --gonga-secondary: 155 92 255;
+  --gonga-text: 255 249 220;
+  --gonga-muted: 170 162 189;
+  --gonga-border: 58 49 80;
+}
+
+[data-theme="lava"] {
+  --clean-bg: 18 11 9;
+  --clean-sidebar: 28 25 23;
+  --clean-accent: 255 59 48;
+  --clean-accent-soft: 255 122 26;
+  --clean-text: 255 244 235;
+  --clean-muted: 185 156 139;
+  --clean-border: 83 49 34;
+  --clean-hover: 53 35 27;
+  --gonga-bg: 18 11 9;
+  --gonga-surface: 28 25 23;
+  --gonga-surface-raised: 41 32 27;
+  --gonga-primary: 255 59 48;
+  --gonga-secondary: 255 122 26;
+  --gonga-text: 255 244 235;
+  --gonga-muted: 185 156 139;
+  --gonga-border: 83 49 34;
+}
+
+[data-theme="mana"] {
+  --clean-bg: 13 11 43;
+  --clean-sidebar: 30 27 75;
+  --clean-accent: 34 211 238;
+  --clean-accent-soft: 168 85 247;
+  --clean-text: 238 252 255;
+  --clean-muted: 164 166 202;
+  --clean-border: 65 60 122;
+  --clean-hover: 48 43 105;
+  --gonga-bg: 13 11 43;
+  --gonga-surface: 30 27 75;
+  --gonga-surface-raised: 41 36 99;
+  --gonga-primary: 34 211 238;
+  --gonga-secondary: 168 85 247;
+  --gonga-text: 238 252 255;
+  --gonga-muted: 164 166 202;
+  --gonga-border: 65 60 122;
+}
+
+[data-theme="mythic"] {
+  --clean-bg: 8 7 6;
+  --clean-sidebar: 18 16 12;
+  --clean-accent: 244 197 66;
+  --clean-accent-soft: 255 159 28;
+  --clean-text: 255 249 232;
+  --clean-muted: 182 164 122;
+  --clean-border: 77 59 24;
+  --clean-hover: 42 33 18;
+  --gonga-bg: 8 7 6;
+  --gonga-surface: 18 16 12;
+  --gonga-surface-raised: 32 26 16;
+  --gonga-primary: 244 197 66;
+  --gonga-secondary: 255 159 28;
+  --gonga-text: 255 249 232;
+  --gonga-muted: 182 164 122;
+  --gonga-border: 77 59 24;
+}
+
+/*
+ * Compatibility bridge for legacy dashboard utilities that predate the
+ * theme tokens. This keeps existing cards, fields, muted copy, and borders
+ * readable while those surfaces are migrated to `clean-*` classes over time.
+ * The selectors are intentionally more specific than Tailwind's utilities.
+ */
+:root .bg-white {
+  background-color: rgb(var(--clean-sidebar));
+}
+
+:root .bg-white\/10 { background-color: rgb(var(--clean-sidebar) / 0.1); }
+:root .bg-white\/20 { background-color: rgb(var(--clean-sidebar) / 0.2); }
+:root .bg-white\/80 { background-color: rgb(var(--clean-sidebar) / 0.8); }
+:root .bg-white\/90 { background-color: rgb(var(--clean-sidebar) / 0.9); }
+:root .bg-white\/95 { background-color: rgb(var(--clean-sidebar) / 0.95); }
+
+:root .bg-gray-50,
+:root .bg-gray-50\/50,
+:root .bg-gray-100 {
+  background-color: rgb(var(--clean-hover));
+}
+
+:root .bg-gray-50\/50 { background-color: rgb(var(--clean-hover) / 0.5); }
+:root .bg-gray-200,
+:root .bg-gray-300 {
+  background-color: rgb(var(--clean-border));
+}
+
+:root .text-gray-900,
+:root .text-gray-800,
+:root .text-gray-700 {
+  color: rgb(var(--clean-text));
+}
+
+:root .text-gray-600,
+:root .text-gray-500,
+:root .text-gray-400,
+:root .text-gray-300 {
+  color: rgb(var(--clean-muted));
+}
+
+:root .border-gray-50,
+:root .border-gray-100,
+:root .border-gray-200,
+:root .border-gray-300 {
+  border-color: rgb(var(--clean-border));
+}
+
+@layer base {
+  html {
+    font-family: system-ui, sans-serif;
+  }
+
+  body {
+    background: rgb(var(--clean-bg));
+    color: rgb(var(--clean-text));
+  }
+}
+
+@layer components {
+  .challenge-admin-shell {
+    --admin-pink: 255 61 138;
+    --admin-lime: 190 255 24;
+    --admin-danger: 255 48 75;
+    min-height: 100%;
+    color: rgb(var(--gonga-text));
+    background-color: rgb(var(--gonga-bg));
+    background-image:
+      linear-gradient(rgba(48, 65, 87, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(48, 65, 87, 0.06) 1px, transparent 1px),
+      radial-gradient(circle at 78% 8%, rgb(var(--gonga-primary) / 0.08), transparent 27rem);
+    background-size: 40px 40px, 40px 40px, auto;
+  }
+
+  .challenge-admin-display {
+    font-family: "Arial Narrow", "Roboto Condensed", "Helvetica Neue", sans-serif;
+    font-stretch: condensed;
+    font-weight: 900;
+    letter-spacing: 0.025em;
+  }
+
+  .challenge-admin-panel {
+    position: relative;
+    border: 1px solid rgba(111, 128, 151, 0.52);
+    background: linear-gradient(145deg, rgba(16, 28, 45, 0.97), rgba(6, 14, 27, 0.97));
+    clip-path: polygon(13px 0, calc(100% - 13px) 0, 100% 13px, 100% calc(100% - 13px), calc(100% - 13px) 100%, 13px 100%, 0 calc(100% - 13px), 0 13px);
+  }
+
+  .challenge-admin-panel-pink {
+    border-color: rgba(255, 61, 138, 0.72);
+  }
+
+  .challenge-admin-scanlines {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(255, 255, 255, 0.025) 3px,
+      rgba(255, 255, 255, 0.025) 4px
+    );
+  }
+
+  .challenge-admin-focus {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+    --tw-ring-color: rgb(var(--gonga-secondary));
+    --tw-ring-offset-color: rgb(var(--gonga-bg));
+  }
+
+  /* Solarized Light background patterns */
+  .discord-bg {
+    background: #fdf6e3;
+    background-image:
+      radial-gradient(circle at 20% 80%, rgba(38, 139, 210, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(38, 139, 210, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(38, 139, 210, 0.04) 0%, transparent 50%);
+  }
+
+  .discord-bg-pattern {
+    background: #fdf6e3;
+    background-image:
+      linear-gradient(rgba(38, 139, 210, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(38, 139, 210, 0.04) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* Solarized scrollbars */
+  .discord-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .discord-scrollbar::-webkit-scrollbar-track {
+    background: #eee8d5;
+  }
+
+  .discord-scrollbar::-webkit-scrollbar-thumb {
+    background: #93a1a1;
+    border-radius: 4px;
+  }
+
+  .discord-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #657b83;
+  }
+
+  /* Focus rings */
+  .discord-focus {
+    @apply focus:outline-none focus:ring-2 focus:ring-discord-accent focus:ring-offset-2 focus:ring-offset-sol-base3;
+  }
+
+  /* Buttons */
+  .discord-button {
+    @apply inline-flex items-center justify-center rounded-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-discord-accent focus:ring-offset-2 focus:ring-offset-sol-base3 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .discord-button-primary {
+    @apply discord-button bg-sol-blue text-sol-base3 hover:bg-sol-blue/90 active:bg-sol-blue/80;
+  }
+
+  .discord-button-secondary {
+    @apply discord-button bg-sol-base2 text-sol-base03 hover:bg-sol-base2/80 active:bg-sol-base2/70;
+  }
+
+  .discord-button-subtle {
+    @apply discord-button bg-transparent text-sol-base01 hover:bg-sol-base2 active:bg-sol-base2/80;
+  }
+
+  .discord-button-danger {
+    @apply discord-button bg-sol-red text-sol-base3 hover:bg-sol-red/90 active:bg-sol-red/80;
+  }
+
+  /* Cards */
+  .discord-card {
+    @apply bg-sol-base2 border border-sol-base1/30 rounded-lg shadow-sm;
+  }
+
+  .discord-card-hover {
+    @apply discord-card hover:bg-sol-base3 hover:border-sol-base1/50 transition-colors duration-200;
+  }
+
+  /* Inputs */
+  .discord-input {
+    @apply w-full bg-sol-base3 text-sol-base03 placeholder-sol-base1 border border-sol-base1/40 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sol-blue focus:border-sol-blue transition-colors duration-200;
+  }
+
+  .discord-input-error {
+    @apply discord-input border-sol-red focus:ring-sol-red focus:border-sol-red;
+  }
+
+  /* Sidebar and Nav enhancements */
+  .sidebar-tooltip {
+    @apply absolute left-full ml-4 px-3 py-1.5 bg-clean-text text-white text-xs font-bold rounded-md opacity-0 -translate-x-2 pointer-events-none transition-all duration-200 z-50 whitespace-nowrap shadow-md;
+  }
+  
+  .group:hover .sidebar-tooltip {
+    @apply opacity-100 translate-x-0;
+  }
+
+  .nav-item-hover {
+    @apply hover:bg-clean-hover hover:text-clean-text transition-colors;
+  }
+
+  .bottom-bar-safe {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.25s ease-out;
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.25s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.25s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out;
+  }
+
+  .animate-bounce-in {
+    animation: bounceIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  /* Text gradients – solarized flavored */
+  .text-gradient-discord {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-sol-base03 to-sol-blue;
+  }
+
+  .text-gradient-success {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-sol-green to-sol-cyan;
+  }
+
+  .text-gradient-warning {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-sol-yellow to-sol-orange;
+  }
+
+  .text-gradient-error {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-sol-red to-sol-orange;
+  }
+
+  /* Shadows */
+  .shadow-discord {
+    box-shadow:
+      0 4px 6px -1px rgba(0, 43, 54, 0.08),
+      0 2px 4px -1px rgba(0, 43, 54, 0.04);
+  }
+
+  .shadow-discord-lg {
+    box-shadow:
+      0 10px 15px -3px rgba(0, 43, 54, 0.08),
+      0 4px 6px -2px rgba(0, 43, 54, 0.04);
+  }
+
+  .shadow-discord-xl {
+    box-shadow:
+      0 20px 25px -5px rgba(0, 43, 54, 0.08),
+      0 10px 10px -5px rgba(0, 43, 54, 0.03);
+  }
+
+  .shadow-discord-glow {
+    box-shadow: 0 0 20px rgba(38, 139, 210, 0.25);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 5px rgba(38, 139, 210, 0.15);
+  }
+  to {
+    box-shadow: 0 0 20px rgba(38, 139, 210, 0.3);
+  }
+}

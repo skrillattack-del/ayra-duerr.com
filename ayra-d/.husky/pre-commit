@@ -1,0 +1,6 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Use --debug flag to see more information if needed
+# Explicitly set the config path to avoid picking up other configs
+npx --no-install lint-staged --no-stash
